@@ -1,0 +1,15 @@
+ATTENDANCE STUDENT LIST FIX
+
+Issue:
+The Phase 8 attendance dropdown only listed students who had already attempted a quiz owned by the logged-in teacher. A newly registered student therefore remained invisible.
+
+Fix:
+- Attendance now lists every registered active account whose role is student.
+- Attendance creation uses the same corrected access rule.
+- The UI shows a clear message when no active student account exists.
+
+After updating:
+1. Restart the backend.
+2. Sign in as teacher/admin.
+3. Open Academic Suite > Attendance-Based Reminder.
+4. The registered student should appear immediately.

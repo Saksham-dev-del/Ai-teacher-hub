@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Teacher Resource Hub &amp; Lesson Plan Assistant</title>
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/ui-clean-motion.css">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#4f46e5">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+</head>
+<body>
+<div class="cursor-glow" id="cursor-glow" aria-hidden="true"></div>
+<div class="ambient-orb orb-a" aria-hidden="true"></div>
+<div class="ambient-orb orb-b" aria-hidden="true"></div>
+
+<!-- AUTH SCREEN -->
+<div class="auth-screen" id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-brand">
+      <div class="brand-mark">R</div>
+      <div class="brand-text">
+        <div class="name">AI Teacher Resource Hub</div>
+        <div class="tag">Lesson Plan Assistant</div>
+      </div>
+    </div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-authtab="login">Log in</button>
+      <button class="auth-tab" data-authtab="register">Create account</button>
+    </div>
+
+    <form id="login-form" class="auth-form active">
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="login-email" required placeholder="you@college.edu">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="login-password" required placeholder="Your password">
+      </div>
+      <button type="submit" class="gen-btn" id="login-submit">Log in</button>
+      <div class="auth-error" id="login-error"></div>
+    </form>
+
+    <form id="register-form" class="auth-form">
+      <div class="field">
+        <label>Name</label>
+        <input type="text" id="register-name" required placeholder="Full name">
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="register-email" required placeholder="you@college.edu">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="register-password" required placeholder="At least 6 characters">
+      </div>
+      <div class="field">
+        <label>I am a</label>
+        <select id="register-role">
+          <option value="teacher">Teacher / Faculty</option>
+          <option value="student">Student</option>
+        </select>
+      </div>
+      <button type="submit" class="gen-btn" id="register-submit">Create account</button>
+      <div class="auth-error" id="register-error"></div>
+    </form>
+
+    <p class="auth-note">Admin accounts are provisioned separately and are not available through self sign-up.</p>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div class="trh-root" id="app-root">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">R</div>
+      <div class="brand-text">
+        <div class="name">AI Teacher Resource Hub</div>
+        <div class="tag">Academic Intelligence Platform</div>
+      </div>
+    </div>
+    <button class="sidebar-menu-btn" id="sidebar-menu-btn" type="button" aria-label="Open navigation" aria-controls="app-sidebar" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="user-badge">
+      <span class="user-name" id="user-name-label"></span>
+      <span class="role-chip" id="user-role-chip"></span>
+      <span id="pwa-network" class="pwa-network">Online</span>
+      <button id="pwa-install" class="pwa-install" hidden>Install</button>
+      <button class="logout-btn" id="btn-logout">Log out</button>
+    </div>
+  </header>
+
+  <div class="app-layout">
+    <aside class="app-sidebar" id="app-sidebar" aria-label="Application navigation">
+      <div class="sidebar-profile">
+        <div class="sidebar-profile-icon">AI</div>
+        <div><strong>Teaching Workspace</strong><small>Grouped tools · less clutter</small></div>
+        <button class="sidebar-close-btn" id="sidebar-close-btn" type="button" aria-label="Close navigation">×</button>
+      </div>
+
+      <nav class="tabs sidebar-nav">
+        <section class="nav-group" data-group="overview">
+          <button class="nav-group-toggle" type="button" aria-expanded="true"><span>Overview</span><i>⌄</i></button>
+          <div class="nav-group-items">
+            <button class="tab active" data-tab="dashboard" data-nav-key="dashboard" data-roles="teacher,admin"><b>⌂</b><span>Dashboard</span></button>
+            <button class="tab" data-tab="hub" data-nav-key="resource-hub" data-roles="teacher,admin"><b>▣</b><span>Resource Hub</span></button>
+            <button class="tab" data-tab="portal" data-nav-key="student-portal"><b>◎</b><span>Student Portal</span></button>
+          </div>
+        </section>
+
+        <section class="nav-group" data-group="content">
+          <button class="nav-group-toggle" type="button" aria-expanded="true"><span>AI Content Studio</span><i>⌄</i></button>
+          <div class="nav-group-items">
+            <button class="tab" data-tab="generator" data-nav-key="ai-resource-studio" data-roles="teacher,admin"><b>✦</b><span>AI Resource Studio</span></button>
+            <button class="tab" data-tab="presentations" data-nav-key="ppt-studio" data-roles="teacher,admin"><b>▤</b><span>PPT Studio</span></button>
+          </div>
+        </section>
+
+        <section class="nav-group" data-group="personalized">
+          <button class="nav-group-toggle" type="button" aria-expanded="true"><span>Personalized Learning</span><i>⌄</i></button>
+          <div class="nav-group-items">
+            <button class="tab" data-tab="personalized" data-focus="adaptive-notes" data-nav-key="adaptive-notes"><b>≈</b><span>Adaptive Notes</span></button>
+            <button class="tab" data-tab="personalized" data-focus="flashcards" data-nav-key="flashcards"><b>◇</b><span>Flashcards</span></button>
+          </div>
+        </section>
+
+        <section class="nav-group" data-group="planning">
+          <button class="nav-group-toggle" type="button" aria-expanded="true"><span>Academic Planning</span><i>⌄</i></button>
+          <div class="nav-group-items">
+            <button class="tab" data-tab="academic" data-focus="question-paper" data-nav-key="question-paper" data-roles="teacher,admin"><b>?</b><span>Question Paper Studio</span></button>
+            <button class="tab" data-tab="academic" data-focus="course-planner" data-nav-key="course-planner" data-roles="teacher,admin"><b>☷</b><span>Course Planner</span></button>
+            <button class="tab" data-tab="academic" data-focus="revision-plan" data-nav-key="revision-planner" data-roles="teacher,admin"><b>↻</b><span>Revision Planner</span></button>
+            <button class="tab" data-tab="academic" data-focus="coding-lab" data-nav-key="coding-lab" data-roles="teacher,admin"><b>&lt;/&gt;</b><span>Coding Lab</span></button>
+            <button class="tab" data-tab="academic" data-focus="case-study" data-nav-key="case-studies" data-roles="teacher,admin"><b>◫</b><span>Case Studies</span></button>
+            <button class="tab" data-tab="calendar" data-nav-key="lesson-calendar"><b>□</b><span>Lesson Calendar</span></button>
+          </div>
+        </section>
+
+        <section class="nav-group" data-group="assessment">
+          <button class="nav-group-toggle" type="button" aria-expanded="true"><span>Assessment & Analytics</span><i>⌄</i></button>
+          <div class="nav-group-items">
+            <button class="tab" data-tab="quizzes" data-nav-key="quiz-center"><b>✓</b><span>Quiz Center</span></button>
+            <button class="tab" data-tab="analytics" data-nav-key="analytics"><b>↗</b><span>Analytics</span></button>
+          </div>
+        </section>
+
+        <section class="nav-group" data-group="multimedia">
+          <button class="nav-group-toggle" type="button" aria-expanded="true"><span>Multimedia & Intelligence</span><i>⌄</i></button>
+          <div class="nav-group-items">
+            <button class="tab" data-tab="intelligence" data-focus="search" data-nav-key="smart-search"><b>⌕</b><span>Semantic Smart Search</span></button>
+          </div>
+        </section>
+
+        <section class="nav-group" data-group="resource-hub-tools">
+          <button class="nav-group-toggle" type="button" aria-expanded="true"><span>AI Teacher Resource Hub</span><i>⌄</i></button>
+          <div class="nav-group-items">
+            <button class="tab" data-tab="intelligence" data-focus="voice" data-nav-key="ai-voice-explanation"><b>🎙</b><span>AI Voice Explanation</span></button>
+            <button class="tab" data-tab="intelligence" data-focus="video" data-nav-key="video-script-generator"><b>🎬</b><span>Video Script Generator</span></button>
+            <button class="tab" data-tab="intelligence" data-focus="diagram" data-nav-key="diagram-generator"><b>◈</b><span>Diagram Generator</span></button>
+            <button class="tab" data-tab="intelligence" data-focus="chart" data-nav-key="chart-generator"><b>📊</b><span>Chart Generator</span></button>
+            <button class="tab" data-tab="intelligence" data-focus="smart-table" data-nav-key="ai-smart-tables"><b>▦</b><span>AI Smart Tables</span></button>
+            <button class="tab" data-tab="intelligence" data-focus="web-search" data-nav-key="ai-internet-search"><b>🌍</b><span>AI Internet Search</span></button>
+            <button class="tab" data-tab="intelligence" data-focus="image-search" data-nav-key="ai-image-finder"><b>🖼</b><span>AI Image Finder</span></button>
+            <button class="tab" data-tab="intelligence" data-focus="illustration-search" data-nav-key="ai-illustration-finder"><b>🎨</b><span>AI Illustration Finder</span></button>
+            <button class="tab" data-tab="intelligence" data-focus="infographic" data-nav-key="ai-infographic-generator"><b>🧾</b><span>AI Infographic Generator</span></button>
+            <button class="tab" data-tab="intelligence" data-focus="whiteboard" data-nav-key="ai-whiteboard"><b>🖊</b><span>AI Whiteboard</span></button>
+          </div>
+        </section>
+
+        <section class="nav-group" data-group="explainer">
+          <button class="nav-group-toggle" type="button" aria-expanded="true"><span>AI Visual Learning Engine</span><i>⌄</i></button>
+          <div class="nav-group-items">
+            <button class="tab" data-tab="explainer" data-nav-key="concept-explainer"><b>💡</b><span>Concept Explainer</span></button>
+          </div>
+        </section>
+
+        <section class="nav-group" data-group="collaboration">
+          <button class="nav-group-toggle" type="button" aria-expanded="true"><span>Collaboration</span><i>⌄</i></button>
+          <div class="nav-group-items">
+            <button class="tab" data-tab="collaboration" data-focus="resource-collaboration" data-nav-key="collaboration" data-roles="teacher,admin"><b>♧</b><span>Collaboration</span></button>
+            <button class="tab" data-tab="collaboration" data-focus="department" data-nav-key="department-hub" data-roles="teacher,admin"><b>▦</b><span>Department Hub</span></button>
+          </div>
+        </section>
+
+        <section class="nav-group" data-group="administration">
+          <button class="nav-group-toggle" type="button" aria-expanded="true"><span>Administration</span><i>⌄</i></button>
+          <div class="nav-group-items">
+            <button class="tab" data-tab="admin" data-nav-key="security-center" data-roles="admin"><b>⬡</b><span>Security Center</span></button>
+          </div>
+        </section>
+      </nav>
+      <div class="sidebar-footer"><i></i><span>Phase 10 platform online</span></div>
+    </aside>
+    <div class="sidebar-scrim" id="sidebar-scrim" aria-hidden="true"></div>
+  <main class="trh-main">
+    <!-- DASHBOARD -->
+    <section id="view-dashboard" class="view active">
+      <div class="hero-row">
+        <div>
+          <h1 class="hero-title">Good to see you back. What are we teaching today?</h1>
+          <p class="hero-sub">Describe a course, subject and topic - get a draft lesson plan, quiz, note set or activity in seconds. You review and approve everything before it reaches a classroom.</p>
+        </div>
+        <button class="hero-cta" data-goto="generator">Generate a resource</button>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-card"><div class="pin"></div>
+          <div class="stat-num" id="stat-total">0</div>
+          <div class="stat-label">Saved resources</div>
+        </div>
+        <div class="stat-card"><div class="pin"></div>
+          <div class="stat-num" id="stat-courses">0</div>
+          <div class="stat-label">Courses covered</div>
+        </div>
+        <div class="stat-card"><div class="pin"></div>
+          <div class="stat-num" id="stat-types">0</div>
+          <div class="stat-label">Resource types used</div>
+        </div>
+        <div class="stat-card"><div class="pin"></div>
+          <div class="stat-num" id="stat-week">0</div>
+          <div class="stat-label">Saved this week</div>
+        </div>
+      </div>
+
+      <div class="phase2-ribbon phase3-ribbon live-surface motion-card">
+        <div class="phase2-icon">P10</div>
+        <div>
+          <strong>Phase 9 Collaboration + Phase 10 Platform Intelligence are live</strong>
+          <span>Department collaboration, approval workflows, version history, QR sharing, voice/audio, diagrams, originality risk, PWA and semantic search are enabled.</span>
+        </div>
+        <div class="phase2-live"><i></i> LIVE</div>
+      </div>
+
+      <div class="phase3-launch-grid">
+        <button class="phase3-launch-card motion-card" data-goto="quizzes"><span>01</span><b>Smart Quiz Center</b><small>Generate, publish, attempt and auto-grade</small></button>
+        <button class="phase3-launch-card motion-card" data-goto="analytics"><span>02</span><b>Learning Intelligence</b><small>Topic, Bloom and CO performance analytics</small></button>
+        <button class="phase3-launch-card motion-card phase3-teacher-only" data-goto="presentations"><span>03</span><b>PPT Studio</b><small>Editable academic slide decks</small></button>
+        <button class="phase3-launch-card motion-card" data-goto="calendar"><span>04</span><b>Lesson Calendar</b><small>Schedule lectures, labs and assessments</small></button>
+              <button class="phase3-launch-card motion-card" data-goto="personalized"><span>05</span><b>Personalized AI</b><small>Adaptive notes, learning levels and exam boosters</small></button>
+        <button class="phase3-launch-card motion-card phase3-teacher-only" data-goto="academic"><span>06</span><b>Academic Suite</b><small>Question papers, planners, rubrics and coding labs</small></button>
+              <button class="phase3-launch-card motion-card phase3-teacher-only" data-goto="collaboration"><span>07</span><b>Collaboration Hub</b><small>Departments, review, versions, ratings and QR sharing</small></button>
+        <button class="phase3-launch-card motion-card" data-goto="intelligence"><span>08</span><b>Multimedia & Search</b><small>Voice, video scripts, diagrams, safety and semantic search</small></button>
+      </div>
+
+      <div class="dash-grid">
+        <div class="panel">
+          <h3>Recently saved</h3>
+          <div id="recent-list"><p class="empty-note">Nothing saved yet - generate your first resource to see it here.</p></div>
+        </div>
+        <div class="panel">
+          <h3>Courses in your hub</h3>
+          <div class="course-chip-wrap" id="course-chips">
+            <span class="empty-note">Your course list will appear once you save a resource.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GENERATOR -->
+    <section id="view-generator" class="view">
+      <div class="generator-heading">
+        <div>
+          <div class="phase-label phase4-label"><span></span> Phase 4 Detailed Visual Studio</div>
+          <h2>Detailed Academic Report &amp; Visual Presentation Generator</h2>
+          <p class="hero-sub">Build deep, section-wise academic content with multi-source RAG, examples, case studies, diagrams, uploaded images, citations, speaker notes and export-ready PDF/PPT layouts.</p>
+        </div>
+        <div class="ai-status-pill phase4-status-pill"><i></i> Multi-stage AI + Visual Engine</div>
+      </div>
+
+      <div class="gen-grid phase2-grid">
+        <div class="form-panel phase2-form">
+          <div class="phase2-panel syllabus-panel">
+            <div class="panel-kicker">1 · Knowledge Base</div>
+            <h3>Syllabus PDF</h3>
+            <p>PDF text is chunked and indexed. Semantic Gemini embeddings are used when available, with a fast lexical fallback.</p>
+            <label class="pdf-drop-zone" id="pdf-drop-zone" for="f-syllabus-file">
+              <input type="file" id="f-syllabus-file" accept="application/pdf,.pdf">
+              <span class="upload-orbit"><b>PDF</b></span>
+              <strong>Drop syllabus PDF here</strong>
+              <small>or click to browse · maximum 10 MB</small>
+            </label>
+            <div class="upload-meta-grid">
+              <input type="text" id="syllabus-course" placeholder="Course (e.g. B.Tech)">
+              <input type="text" id="syllabus-subject" placeholder="Subject (e.g. DBMS)">
+            </div>
+            <button class="secondary-ai-btn" id="btn-upload-syllabus" type="button">Upload &amp; build RAG index</button>
+            <div class="upload-progress" id="upload-progress"><span></span></div>
+            <div class="syllabus-status" id="syllabus-status">No PDF selected.</div>
+            <div class="field compact-field">
+              <label>Use indexed syllabus</label>
+              <div class="select-action-row">
+                <select id="f-syllabus"><option value="">No syllabus selected</option></select>
+                <button type="button" class="mini-danger" id="btn-delete-syllabus" title="Delete selected syllabus">Delete</button>
+              </div>
+            </div>
+            <label class="toggle-line">
+              <input type="checkbox" id="f-use-rag" checked>
+              <span class="toggle-ui"></span>
+              Ground generation with selected syllabus (RAG)
+            </label>
+          </div>
+
+          <div class="panel-kicker">2 · Teaching Brief</div>
+          <div class="field">
+            <label>Course</label>
+            <select id="f-course">
+              <option>B.Tech</option><option>B.Com</option><option>BCA</option>
+              <option>BBA</option><option>B.Sc</option><option>BA</option>
+              <option>MBA</option><option>MCA</option><option>Other</option>
+            </select>
+          </div>
+          <div class="field"><label>Subject</label><input type="text" id="f-subject" placeholder="e.g. Data Structures" value="Data Structures"></div>
+          <div class="field"><label>Topic</label><input type="text" id="f-topic" placeholder="e.g. Binary Search Trees" value="Binary Search Trees"></div>
+          <div class="two-col-fields">
+            <div class="field"><label>Difficulty</label><select id="f-difficulty"><option>Beginner</option><option selected>Intermediate</option><option>Advanced</option></select></div>
+            <div class="field"><label>Duration</label><select id="f-duration"><option>30 minutes</option><option selected>45 minutes</option><option>60 minutes</option><option>90 minutes</option></select></div>
+          </div>
+          <div class="field"><label>Resource type</label><select id="f-type"><option>Lesson Plan</option><option>Notes</option><option>Quiz</option><option>Assignment</option><option>Classroom Activity</option><option>Viva Questions</option><option>Study Material</option></select></div>
+          <div class="field"><label>Language</label><select id="f-language"><option>English</option><option>Hindi</option><option>Hinglish</option><option>Spanish</option><option>French</option><option>German</option><option>Tamil</option><option>Telugu</option><option>Marathi</option><option>Bengali</option><option>Arabic</option></select></div>
+
+
+
+          <div class="phase2-panel phase4-control-panel">
+            <div class="panel-kicker">4 · Detailed Visual Export Engine</div>
+            <h3>Content depth &amp; visual design</h3>
+            <p>Detailed and Research modes use a multi-stage pipeline: outline planning, batched section expansion, visual planning, pedagogy mapping and export validation.</p>
+            <div class="two-col-fields">
+              <div class="field"><label>Content depth</label><select id="f-content-depth"><option value="quick">Quick Summary</option><option value="standard">Standard Notes</option><option value="detailed" selected>Detailed Explanation</option><option value="research">Research / Faculty Level</option></select></div>
+              <div class="field"><label>Visual density</label><select id="f-visual-density"><option value="text-focused">Text Focused</option><option value="balanced" selected>Balanced</option><option value="visual-rich">Visual Rich</option></select></div>
+            </div>
+            <div class="three-col-fields">
+              <div class="field"><label>Target PDF pages</label><select id="f-target-pages"><option>8</option><option>12</option><option selected>20</option><option>25</option><option>32</option><option>40</option></select></div>
+              <div class="field"><label>Target PPT slides</label><select id="f-target-slides"><option>12</option><option>18</option><option selected>26</option><option>30</option><option>36</option><option>40</option></select></div>
+              <div class="field"><label>Examples / section</label><select id="f-examples"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></div>
+            </div>
+            <div class="phase4-toggle-grid">
+              <label class="toggle-line"><input id="f-include-diagrams" type="checkbox" checked><span class="toggle-ui"></span> Diagrams &amp; concept maps</label>
+              <label class="toggle-line"><input id="f-include-images" type="checkbox" checked><span class="toggle-ui"></span> Uploaded images</label>
+              <label class="toggle-line"><input id="f-include-cases" type="checkbox" checked><span class="toggle-ui"></span> Case studies</label>
+              <label class="toggle-line"><input id="f-include-references" type="checkbox" checked><span class="toggle-ui"></span> Citations &amp; references</label>
+              <label class="toggle-line"><input id="f-include-notes" type="checkbox" checked><span class="toggle-ui"></span> PPT speaker notes</label>
+            </div>
+            <div class="field compact-field">
+              <label>Additional academic sources <small>(Ctrl/Cmd + click for multiple)</small></label>
+              <select id="f-reference-syllabi" multiple size="4"></select>
+            </div>
+            <div class="phase4-image-uploader">
+              <label class="image-drop-zone" id="phase4-image-drop" for="f-visual-images">
+                <input id="f-visual-images" type="file" accept="image/png,image/jpeg" multiple>
+                <span>IMG</span><div><b>Add diagrams, screenshots or subject images</b><small>PNG/JPG · up to 8 images · used in PDF and PPT</small></div>
+              </label>
+              <button type="button" class="secondary-ai-btn" id="btn-upload-visuals">Upload selected images</button>
+              <div class="phase4-media-grid" id="phase4-media-grid"><small>No visual assets selected.</small></div>
+            </div>
+          </div>
+
+          <div class="phase2-panel taxonomy-panel">
+            <div class="panel-kicker">3 · Pedagogy Intelligence</div>
+            <h3>Bloom's Taxonomy</h3>
+            <p>Select cognitive levels for automatically generated questions.</p>
+            <div class="bloom-selector" id="bloom-selector">
+              <label class="bloom-chip remember"><input type="checkbox" value="Remember" checked><span>Remember</span></label>
+              <label class="bloom-chip understand"><input type="checkbox" value="Understand" checked><span>Understand</span></label>
+              <label class="bloom-chip apply"><input type="checkbox" value="Apply" checked><span>Apply</span></label>
+              <label class="bloom-chip analyze"><input type="checkbox" value="Analyze" checked><span>Analyze</span></label>
+              <label class="bloom-chip evaluate"><input type="checkbox" value="Evaluate"><span>Evaluate</span></label>
+              <label class="bloom-chip create"><input type="checkbox" value="Create"><span>Create</span></label>
+            </div>
+            <div class="field compact-field"><label>Bloom question count</label><select id="f-bloom-count"><option>4</option><option selected>6</option><option>8</option><option>10</option><option>12</option></select></div>
+            <div class="field compact-field">
+              <label>Course Outcomes <small>(one per line; leave blank for AI suggestions)</small></label>
+              <textarea id="f-course-outcomes" rows="5" placeholder="Explain fundamental concepts of the topic.&#10;Apply the concept to solve domain problems.&#10;Analyze alternatives and justify a solution."></textarea>
+            </div>
+          </div>
+
+          <button class="gen-btn phase2-generate" id="btn-generate">
+            <span class="btn-spark">✦</span> Generate detailed visual resource
+          </button>
+        </div>
+
+        <div class="output-area" id="output-area">
+          <div class="placeholder-card phase2-placeholder">
+            <div class="neural-loader idle"><i></i><i></i><i></i><i></i><b>AI</b></div>
+            <div><strong>Your Phase 4 detailed visual draft will appear here</strong></div>
+            <div style="max-width:420px; font-size:12.5px;">Detailed output includes section-wise explanations, examples, case studies, diagrams, uploaded images, speaker notes, citations, Bloom questions, CO mapping and export validation.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESOURCE HUB -->
+    <section id="view-hub" class="view">
+      <h2 style="font-size:22px;">Resource Hub</h2>
+      <p class="hero-sub" style="margin-bottom:20px;">Everything you've reviewed and saved, in one searchable place.</p>
+
+      <div class="hub-toolbar">
+        <input type="text" id="hub-search" placeholder="Search by subject or topic...">
+        <select id="hub-filter-course"><option value="">All courses</option></select>
+        <select id="hub-filter-type">
+          <option value="">All types</option>
+          <option>Lesson Plan</option><option>Notes</option><option>Quiz</option>
+          <option>Assignment</option><option>Classroom Activity</option>
+          <option>Viva Questions</option><option>Study Material</option>
+        </select>
+      </div>
+      <div class="hub-count" id="hub-count"></div>
+      <div class="hub-grid" id="hub-grid"></div>
+    </section>
+
+    <!-- STUDENT PORTAL -->
+    <section id="view-portal" class="view">
+      <h2 style="font-size:22px;">Student Portal</h2>
+      <p class="hero-sub" style="margin-bottom:18px;">Resources teachers have published for students, across the whole platform.</p>
+      <div class="portal-banner">Only resources a teacher has explicitly shared appear below.</div>
+      <div class="portal-grid" id="portal-grid"></div>
+    </section>
+
+
+
+    <!-- PHASE 3 QUIZ CENTER -->
+    <section id="view-quizzes" class="view">
+      <div class="phase3-view-head">
+        <div>
+          <div class="phase-label"><span></span> Secure Assessment Engine</div>
+          <h2 id="quiz-view-title">Quiz Center</h2>
+          <p class="hero-sub" id="quiz-view-subtitle">Create, publish, attempt and auto-grade syllabus-aligned assessments.</p>
+        </div>
+        <div class="phase3-live-pill"><i></i> Camera proctoring + auto-grading</div>
+      </div>
+
+      <div id="quiz-teacher-panel" class="phase3-teacher-only quiz-studio-grid">
+        <div class="phase3-panel motion-card">
+          <div class="panel-kicker">AI Quiz Builder</div>
+          <h3>Generate from a saved resource</h3>
+          <p class="phase3-helper">Gemini creates objective questions with answer keys, Bloom levels and course-outcome mapping. A deterministic fallback keeps the workflow usable if AI is unavailable.</p>
+          <div class="field"><label>Source resource</label><select id="quiz-resource-select"><option value="">Select a saved resource</option></select></div>
+          <div class="field"><label>Quiz title <small>(optional)</small></label><input id="quiz-title-input" type="text" placeholder="e.g. Unit 1 Concept Check"></div>
+          <div class="three-col-fields">
+            <div class="field"><label>Questions</label><select id="quiz-question-count"><option>5</option><option selected>10</option><option>15</option><option>20</option></select></div>
+            <div class="field"><label>Duration</label><select id="quiz-duration"><option>10</option><option selected>15</option><option>20</option><option>30</option><option>45</option></select></div>
+            <div class="field"><label>Difficulty</label><select id="quiz-difficulty"><option>Beginner</option><option selected>Intermediate</option><option>Advanced</option></select></div>
+          </div>
+          <label class="toggle-line"><input id="quiz-publish-now" type="checkbox"><span class="toggle-ui"></span> Publish immediately for students</label>
+          <div class="secure-quiz-config">
+            <div class="secure-config-head"><div><span class="secure-lock">SECURE</span><b>Academic Integrity &amp; Camera Proctoring</b></div><label class="toggle-line compact"><input id="quiz-secure-enabled" type="checkbox" checked><span class="toggle-ui"></span> Enable</label></div>
+            <p>Camera frames remain in the student's browser and are not uploaded or recorded. Only integrity events and counters are stored for teacher review.</p>
+            <div class="secure-config-grid">
+              <label><input id="quiz-require-camera" type="checkbox" checked> Require active camera</label>
+              <label><input id="quiz-require-fullscreen" type="checkbox" checked> Require fullscreen</label>
+              <label><input id="quiz-auto-cancel" type="checkbox" checked> Auto-cancel on severe violation</label>
+              <label><input id="quiz-block-clipboard" type="checkbox" checked> Block copy, cut and paste</label>
+              <label><input id="quiz-block-context" type="checkbox" checked> Block right-click menu</label>
+              <label><input id="quiz-block-shortcuts" type="checkbox" checked> Block restricted shortcuts</label>
+              <label><input id="quiz-detect-obstruction" type="checkbox" checked> Detect covered/dark camera</label>
+              <label><input id="quiz-detect-face" type="checkbox" checked> Require continuous face presence</label>
+              <label><input id="quiz-cancel-face-missing" type="checkbox" checked> Auto-cancel when face leaves frame</label>
+              <label><input id="quiz-require-identity" type="checkbox" checked> Require teacher-approved student identity</label>
+              <label><input id="quiz-require-liveness" type="checkbox" checked> Require live anti-spoof verification</label>
+              <label><input id="quiz-cancel-identity-mismatch" type="checkbox" checked> Auto-cancel repeated identity mismatch</label>
+              <label><input id="quiz-secure-browser" type="checkbox" checked> Require top-level secure browser</label>
+            </div>
+            <div class="three-col-fields secure-thresholds">
+              <div class="field"><label>Allowed tab switches</label><select id="quiz-max-tabs"><option selected>0</option><option>1</option><option>2</option><option>3</option></select></div>
+              <div class="field"><label>Allowed fullscreen exits</label><select id="quiz-max-fullscreen"><option selected>0</option><option>1</option><option>2</option></select></div>
+              <div class="field"><label>Allowed camera interruptions</label><select id="quiz-max-camera"><option selected>0</option><option>1</option><option>2</option></select></div>
+              <div class="field"><label>Face absence grace</label><select id="quiz-face-grace"><option value="2" selected>2 seconds</option><option value="3">3 seconds</option><option value="5">5 seconds</option><option value="8">8 seconds</option><option value="10">10 seconds</option><option value="15">15 seconds</option></select></div>
+              <div class="field"><label>Identity match threshold</label><select id="quiz-identity-threshold"><option value="0.50">50%</option><option value="0.55" selected>55%</option><option value="0.60">60%</option><option value="0.65">65%</option><option value="0.70">70%</option></select></div>
+              <div class="field"><label>Mismatch confirmations</label><select id="quiz-identity-mismatch-limit"><option value="1">1 (strict)</option><option value="2" selected>2</option><option value="3">3</option></select></div>
+              <div class="field"><label>Random identity recheck</label><select id="quiz-identity-recheck-min"><option value="10">10 sec min</option><option value="15" selected>15 sec min</option><option value="20">20 sec min</option></select><select id="quiz-identity-recheck-max"><option value="25">25 sec max</option><option value="35" selected>35 sec max</option><option value="45">45 sec max</option></select></div>
+            </div>
+          </div>
+          <button id="btn-generate-quiz" class="gen-btn phase3-action"><span>✦</span> Generate auto-graded quiz</button>
+          <div id="quiz-generation-status" class="phase3-status">Choose a resource to begin.</div>
+        </div>
+        <div class="phase3-panel motion-card quiz-insight-panel">
+          <div class="panel-kicker">Assessment Design</div>
+          <h3>Built for measurable learning</h3>
+          <div class="quiz-feature-stack">
+            <div><b>Objective grading</b><span>MCQ, true/false and controlled short answers</span></div>
+            <div><b>Bloom alignment</b><span>Remember → Analyze question coverage</span></div>
+            <div><b>CO analytics</b><span>Outcome-level accuracy and weak-area detection</span></div>
+            <div><b>Attempt controls</b><span>Timer, pass marks, max attempts and review</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase3-section-title"><h3 id="quiz-list-heading">Available quizzes</h3><button class="mini-refresh" id="btn-refresh-quizzes">Refresh</button></div>
+      <div id="quiz-summary-row" class="phase3-summary-row"></div>
+      <div id="quiz-list" class="quiz-grid"></div>
+      <div id="quiz-attempt-stage" class="quiz-attempt-stage"></div>
+    </section>
+
+    <!-- PHASE 3 PPT STUDIO -->
+    <section id="view-presentations" class="view">
+      <div class="phase3-view-head">
+        <div>
+          <div class="phase-label"><span></span> Phase 4 Visual Presentation Studio</div>
+          <h2>AI Academic PPT Generator</h2>
+          <p class="hero-sub">Turn a reviewed resource into an editable visual PowerPoint with diagrams, uploaded images, examples, case studies, citations and speaker notes.</p>
+        </div>
+        <div class="phase3-live-pill ppt-live"><i></i> Editable .pptx</div>
+      </div>
+
+      <!-- PHASE 11.1: AI PRESENTATION GENERATOR -->
+      <div class="phase3-panel motion-card qpg-panel">
+        <div class="phase-label"><span></span> AI Presentation Generator</div>
+        <h3 style="margin:6px 0 4px;">Generate a deck straight from a topic</h3>
+        <p class="hero-sub" style="margin:0 0 14px;">Sirf Topic, Subject, Class, Semester aur Presentation Type do — AI poori slide deck (speaker notes, references, conclusion aur Q&amp;A slide ke saath) bana degi.</p>
+        <button id="btn-qtm-toggle" class="gen-btn phase3-action qle-btn" style="background:transparent;border:1px solid var(--rule,#ccc);margin-bottom:10px;">📚 Browse starter templates</button>
+        <div id="qtm-gallery" class="qtm-gallery" style="display:none;"></div>
+        <div class="two-col-fields">
+          <div class="field"><label>Topic</label><input id="qpg-topic" type="text" placeholder="e.g. Binary Search Trees"></div>
+          <div class="field"><label>Subject</label><input id="qpg-subject" type="text" placeholder="e.g. Data Structures"></div>
+        </div>
+        <div class="two-col-fields">
+          <div class="field"><label>Class / Course</label><input id="qpg-class" type="text" placeholder="e.g. B.Tech CSE"></div>
+          <div class="field"><label>Semester</label><input id="qpg-semester" type="text" placeholder="e.g. Semester 5"></div>
+        </div>
+        <div class="two-col-fields">
+          <div class="field"><label>Presentation type</label>
+            <select id="qpg-type">
+              <option>Lecture</option>
+              <option>Seminar</option>
+              <option>Guest Lecture</option>
+              <option>Project Defense / Viva</option>
+              <option>Conference Talk</option>
+              <option>Webinar</option>
+              <option>Orientation</option>
+            </select>
+          </div>
+          <div class="field"><label>Slide count</label>
+            <select id="qpg-slides">
+              <option>10</option><option>15</option><option selected>20</option><option>30</option>
+              <option>45</option><option>60</option><option>80</option><option>100</option>
+            </select>
+          </div>
+        </div>
+        <div class="field"><label>Theme</label>
+          <select id="qpg-theme" class="theme-select-hidden">
+            <option value="academic">Academic Paper</option>
+            <option value="modern">Modern</option>
+            <option value="corporate">Corporate</option>
+            <option value="startup">Startup</option>
+            <option value="glass">Glassmorphism</option>
+            <option value="darkmode">Dark Mode</option>
+            <option value="apple">Apple Style</option>
+            <option value="material">Google Material</option>
+            <option value="minimal">Minimal</option>
+            <option value="gradient">Gradient</option>
+            <option value="ocean">Ocean Blue</option>
+            <option value="sunrise">Sunrise Commerce</option>
+            <option value="midnight">Midnight AI</option>
+          </select>
+          <div id="qpg-theme-gallery" class="theme-gallery"></div>
+        </div>
+        <button id="btn-qpg-generate" class="gen-btn phase3-action">Generate presentation</button>
+        <button id="btn-qpg-pdf" class="gen-btn phase3-action" style="display:none;margin-top:8px;background:transparent;border:1px solid var(--rule,#ccc);">Also download as PDF</button>
+        <div id="qpg-progress-shell" class="phase4-progress-shell" style="display:none;">
+          <div class="phase4-progress-meta"><b id="qpg-progress-label">1%</b><span id="qpg-stage-message">Preparing generation job...</span></div>
+          <div class="phase4-progress-track"><i id="qpg-progress-fill" style="width:1%"></i></div>
+        </div>
+        <div id="qpg-status" class="phase3-status">Deck ban jaane ke baad neeche PowerPoint ya PDF download kar sakte ho.</div>
+      </div>
+
+      <div class="ppt-studio-grid">
+        <div class="phase3-panel motion-card">
+          <div class="field"><label>Saved resource</label><select id="ppt-resource-select"><option value="">Select a resource</option></select></div>
+          <div class="two-col-fields">
+            <div class="field"><label>Theme</label><select id="ppt-theme" class="theme-select-hidden"><option value="academic">Academic Paper</option><option value="modern">Modern</option><option value="corporate">Corporate</option><option value="startup">Startup</option><option value="glass">Glassmorphism</option><option value="darkmode">Dark Mode</option><option value="apple">Apple Style</option><option value="material">Google Material</option><option value="minimal">Minimal</option><option value="gradient">Gradient</option><option value="ocean">Ocean Blue</option><option value="sunrise">Sunrise Commerce</option><option value="midnight">Midnight AI</option></select><div id="ppt-theme-gallery" class="theme-gallery"></div></div>
+            <div class="field"><label>Maximum slides</label><select id="ppt-slide-limit"><option>10</option><option>12</option><option>15</option><option>18</option><option selected>26</option><option>30</option><option>36</option><option>40</option><option>50</option><option>60</option><option>80</option><option>100</option></select></div>
+          </div>
+          <div class="field"><label>Institution name</label><input id="ppt-institution" type="text" placeholder="Your college / university"></div>
+          <label class="toggle-line"><input id="ppt-speaker-notes" type="checkbox" checked><span class="toggle-ui"></span> Include detailed speaker notes</label>
+
+          <button id="btn-generate-ppt" class="gen-btn phase3-action">Generate &amp; download PowerPoint</button>
+          <div id="ppt-status" class="phase3-status">The deck remains editable in Microsoft PowerPoint, Google Slides or LibreOffice Impress.</div>
+
+
+        </div>
+        <div class="ppt-preview-shell motion-card" id="ppt-preview">
+          <div class="ppt-preview-empty"><span>PPTX</span><b>Select a saved resource</b><p>A visual slide plan will appear here before download.</p></div>
+        </div>
+      </div>
+
+      <div class="qtools-panel-wide motion-card">
+        <div class="qtools-head">AI Tools <span>tap a tile to open it</span></div>
+        <div class="qtools-list">
+
+            <details class="qtool">
+              <summary><i>✏️</i> Live Edit <small>rewrite the whole deck from one instruction</small></summary>
+              <div class="qtool-body">
+                <textarea id="qle-instruction" rows="2" placeholder='e.g. "Make this more professional" or "Simplify for first-year students"'></textarea>
+                <button id="btn-qle-apply" class="gen-btn phase3-action qle-btn">Apply to selected deck</button>
+                <div id="qle-status" class="phase3-status">Select a resource above, describe the change, then apply.</div>
+              </div>
+            </details>
+
+            <details class="qtool">
+              <summary><i>🌐</i> Language Converter <small>translate every slide in one click</small></summary>
+              <div class="qtool-body">
+                <select id="qlc-language"><option>English</option><option>Hindi</option><option>Hinglish</option><option>French</option><option>German</option><option>Japanese</option></select>
+                <button id="btn-qlc-apply" class="gen-btn phase3-action qle-btn">Translate selected deck</button>
+                <div id="qlc-status" class="phase3-status">Switches headings, bullets, speaker notes and tables.</div>
+              </div>
+            </details>
+
+            <details class="qtool">
+              <summary><i>🔍</i> PPT Reviewer <small>professional score, grammar, contrast, density</small></summary>
+              <div class="qtool-body">
+                <button id="btn-qpr-review" class="gen-btn phase3-action qle-btn">Review this deck</button>
+                <div id="qpr-status" class="phase3-status">Checks grammar, text density, missing visuals and real contrast math.</div>
+                <div id="qpr-report"></div>
+              </div>
+            </details>
+
+            <details class="qtool">
+              <summary><i>🎯</i> Audience Mode <small>retune tone for students, managers, clients...</small></summary>
+              <div class="qtool-body">
+                <select id="qam-audience"><option value="Students">Students</option><option value="Teachers">Teachers / Faculty</option><option value="Managers">Managers / Executives</option><option value="Clients">Clients</option><option value="Interview">Interview Panel</option><option value="Seminar">Seminar</option><option value="Conference">Conference</option></select>
+                <button id="btn-qam-apply" class="gen-btn phase3-action qle-btn">Adapt selected deck</button>
+                <div id="qam-status" class="phase3-status">Simpler for students, ROI-focused for managers, etc.</div>
+              </div>
+            </details>
+
+            <details class="qtool">
+              <summary><i>📐</i> Layout Optimizer <small>auto-split text-heavy slides</small></summary>
+              <div class="qtool-body">
+                <button id="btn-qlo-apply" class="gen-btn phase3-action qle-btn">Auto-optimize layout</button>
+                <div id="qlo-status" class="phase3-status">Finds slides over ~150 words and splits them into two lighter ones.</div>
+              </div>
+            </details>
+
+            <details class="qtool">
+              <summary><i>✨</i> Content Beautifier <small>paste rough notes, get polished slides</small></summary>
+              <div class="qtool-body">
+                <textarea id="qcb-text" rows="3" placeholder="Paste rough/plain notes here — they'll become polished slide sections added to the deck."></textarea>
+                <button id="btn-qcb-apply" class="gen-btn phase3-action qle-btn">Beautify &amp; add as new slides</button>
+                <div id="qcb-status" class="phase3-status">Select a deck above first.</div>
+              </div>
+            </details>
+
+            <details class="qtool">
+              <summary><i>🔖</i> Citation Style <small>Plain / APA / IEEE / MLA / Chicago</small></summary>
+              <div class="qtool-body">
+                <select id="qcg-style"><option value="Plain">Plain</option><option value="APA">APA</option><option value="IEEE">IEEE</option><option value="MLA">MLA</option><option value="Chicago">Chicago</option></select>
+                <button id="btn-qcg-apply" class="gen-btn phase3-action qle-btn">Apply citation style</button>
+                <div id="qcg-status" class="phase3-status">Applies to the references slide on the next export.</div>
+              </div>
+            </details>
+
+            <details class="qtool">
+              <summary><i>🎬</i> Animation Plan <small>suggested transitions per slide</small></summary>
+              <div class="qtool-body">
+                <button id="btn-qap-suggest" class="gen-btn phase3-action qle-btn">Suggest animations &amp; transitions</button>
+                <div id="qap-status" class="phase3-status">Apply each suggestion in PowerPoint's Transitions tab.</div>
+                <div id="qap-output"></div>
+              </div>
+            </details>
+
+            <details class="qtool">
+              <summary><i>📝</i> Quiz Generator <small>turn this deck into an auto-graded quiz</small></summary>
+              <div class="qtool-body">
+                <button id="btn-qqz-generate" class="gen-btn phase3-action qle-btn">Generate quiz from this deck</button>
+                <div id="qqz-status" class="phase3-status">Opens in Quizzes once ready (with proctoring options).</div>
+              </div>
+            </details>
+
+            <details class="qtool">
+              <summary><i>🎓</i> Exam Notes + Flashcards <small>one-page summary, flip cards</small></summary>
+              <div class="qtool-body">
+                <button id="btn-qen-generate" class="gen-btn phase3-action qle-btn">Generate exam notes + flashcards</button>
+                <div id="qen-status" class="phase3-status">Built from the deck's key points.</div>
+                <div id="qen-output"></div>
+              </div>
+            </details>
+
+            <details class="qtool">
+              <summary><i>🔬</i> Research Pipeline <small>Presentation → Notes → Quiz, chained</small></summary>
+              <div class="qtool-body">
+                <button id="btn-qre-run" class="gen-btn phase3-action qle-btn">Run full research pipeline</button>
+                <div id="qre-status" class="phase3-status">Runs Exam Notes then Quiz Generator automatically.</div>
+              </div>
+            </details>
+
+            <details class="qtool">
+              <summary><i>📄</i> Export as Word / Website <small>.docx or a hosted-anywhere .html site</small></summary>
+              <div class="qtool-body">
+                <button id="btn-qdocx-download" class="gen-btn phase3-action qle-btn" style="background:transparent;border:1px solid var(--rule,#ccc);">Download as Word document (.docx)</button>
+                <button id="btn-qwg-generate" class="gen-btn phase3-action qle-btn">Export as website (.html)</button>
+                <div id="qwg-status" class="phase3-status">The website is self-contained — host it anywhere.</div>
+              </div>
+            </details>
+
+            <details class="qtool">
+              <summary><i>🧾</i> Resume Generator <small>deck → resume bullet points</small></summary>
+              <div class="qtool-body">
+                <button id="btn-qres-generate" class="gen-btn phase3-action qle-btn">Generate resume text</button>
+                <div id="qres-status" class="phase3-status">Downloads a plain-text bullet list you can paste into your resume.</div>
+              </div>
+            </details>
+
+            <details class="qtool">
+              <summary><i>🖼️</i> Portfolio Generator <small>deck → project-card portfolio site</small></summary>
+              <div class="qtool-body">
+                <button id="btn-qport-generate" class="gen-btn phase3-action qle-btn">Generate portfolio (.html)</button>
+                <div id="qport-status" class="phase3-status">Self-contained HTML — host it anywhere.</div>
+              </div>
+            </details>
+
+            <details class="qtool">
+              <summary><i>📰</i> Blog Generator <small>deck → flowing blog post (Markdown)</small></summary>
+              <div class="qtool-body">
+                <button id="btn-qblog-generate" class="gen-btn phase3-action qle-btn">Generate blog post</button>
+                <div id="qblog-status" class="phase3-status">Downloads a .md file with narrative prose, not just bullets.</div>
+              </div>
+            </details>
+
+            <details class="qtool">
+              <summary><i>💼</i> LinkedIn Post Generator <small>3 post variants from this deck</small></summary>
+              <div class="qtool-body">
+                <button id="btn-qli-generate" class="gen-btn phase3-action qle-btn">Generate LinkedIn posts</button>
+                <div id="qli-status" class="phase3-status"></div>
+                <div id="qli-output"></div>
+              </div>
+            </details>
+
+            <details class="qtool">
+              <summary><i>🎥</i> YouTube / Reel / Podcast Script <small>grounded in this deck's content</small></summary>
+              <div class="qtool-body">
+                <select id="qyt-format">
+                  <option value="YouTube video script (5-8 minutes)">YouTube video (5–8 min)</option>
+                  <option value="Reel/Shorts script (45-60 seconds)">Reel / Shorts (45–60s)</option>
+                  <option value="Podcast segment script (5 minutes)">Podcast segment (5 min)</option>
+                </select>
+                <button id="btn-qyt-generate" class="gen-btn phase3-action qle-btn">Generate script</button>
+                <div id="qyt-status" class="phase3-status"></div>
+                <div id="qyt-output"></div>
+              </div>
+            </details>
+
+            <details class="qtool">
+              <summary><i>🔊</i> Presentation Narration <small>read-aloud script + downloadable audio</small></summary>
+              <div class="qtool-body">
+                <button id="btn-qnar-script" class="gen-btn phase3-action qle-btn">Build narration script</button>
+                <button id="btn-qnar-audio" class="gen-btn phase3-action qle-btn" style="background:transparent;border:1px solid var(--rule,#ccc);">Download narration audio (.wav)</button>
+                <div id="qnar-status" class="phase3-status">Built from each slide's speaker notes.</div>
+                <div id="qnar-output"></div>
+              </div>
+            </details>
+
+            <details class="qtool">
+              <summary><i>🎨</i> Brand Kit <small>custom colors + institution logo</small></summary>
+              <div class="qtool-body">
+                <div class="two-col-fields">
+                  <div class="field"><label>Primary color</label><input id="qbrand-primary" type="color" value="#2f5d50"></div>
+                  <div class="field"><label>Secondary color</label><input id="qbrand-secondary" type="color" value="#e0a93a"></div>
+                </div>
+                <div class="field"><label>Logo (PNG/JPG)</label><input id="qbrand-logo" type="file" accept="image/png,image/jpeg"></div>
+                <button id="btn-qbrand-apply" class="gen-btn phase3-action qle-btn">Apply brand to selected deck</button>
+                <div id="qbrand-status" class="phase3-status">Colors override the theme; logo appears on the title slide.</div>
+              </div>
+            </details>
+
+            <details class="qtool">
+              <summary><i>🎥</i> Video Presentation Package <small>pptx + narration audio + timing (not a rendered .mp4)</small></summary>
+              <div class="qtool-body">
+                <button id="btn-qvid-package" class="gen-btn phase3-action qle-btn">Download video assembly package (.zip)</button>
+                <div id="qvid-status" class="phase3-status">Includes the deck, a full narration script, timed manifest, and narration audio where possible — this project doesn't render an actual .mp4 (no video-encoding server configured), so you assemble the final video in PowerPoint's "Record Slide Show" or any editor using these files.</div>
+              </div>
+            </details>
+
+            <details class="qtool">
+              <summary><i>🧑‍🏫</i> Presenter Avatar (Lite) <small>free animated avatar reads the deck aloud</small></summary>
+              <div class="qtool-body">
+                <select id="qav-voice"><option value="">Loading voices…</option></select>
+                <button id="btn-qav-start" class="gen-btn phase3-action qle-btn">▶ Start presenting</button>
+                <button id="btn-qav-stop" class="gen-btn phase3-action qle-btn" style="background:transparent;border:1px solid var(--rule,#ccc);">⏹ Stop</button>
+                <div id="qav-status" class="phase3-status">Uses your browser's built-in text-to-speech — free, no API key, works offline. Not a photorealistic avatar (that needs a paid service like D-ID/HeyGen — see note below).</div>
+                <div id="qav-stage" class="qav-stage" style="display:none;">
+                  <svg id="qav-avatar" viewBox="0 0 200 200" class="qav-svg">
+                    <circle cx="100" cy="100" r="92" fill="#eef2ff"/>
+                    <ellipse cx="100" cy="122" rx="52" ry="58" fill="#4f46e5"/>
+                    <circle cx="100" cy="82" r="46" fill="#ffe4c4"/>
+                    <circle cx="82" cy="78" r="6" fill="#1e293b" id="qav-eye-l"/>
+                    <circle cx="118" cy="78" r="6" fill="#1e293b" id="qav-eye-r"/>
+                    <ellipse id="qav-mouth" cx="100" cy="102" rx="16" ry="4" fill="#7c2d12"/>
+                  </svg>
+                  <div class="qav-caption"><b id="qav-slide-label">Ready</b><p id="qav-caption-text"></p></div>
+                </div>
+              </div>
+            </details>
+
+            <details class="qtool">
+              <summary><i>👥</i> Collaboration <small>comments, version history, share link</small></summary>
+              <div class="qtool-body">
+                <button id="btn-qco-open" class="gen-btn phase3-action qle-btn">Open collaboration for this deck</button>
+                <div id="qco-status" class="phase3-status">Saves the deck if needed, then opens comments, versions and sharing.</div>
+              </div>
+            </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- PHASE 3 LESSON CALENDAR -->
+    <section id="view-calendar" class="view">
+      <div class="phase3-view-head">
+        <div>
+          <div class="phase-label"><span></span> Phase 3 Teaching Planner</div>
+          <h2>Lesson Calendar</h2>
+          <p class="hero-sub">Plan lectures, labs, quizzes, assignments and revision sessions. Students see only shared events.</p>
+        </div>
+        <button id="btn-new-calendar-event" class="hero-cta phase3-teacher-only">+ Schedule lesson</button>
+      </div>
+      <div class="calendar-toolbar">
+        <button id="calendar-prev" class="calendar-nav">←</button>
+        <div><strong id="calendar-month-label">Month</strong><span id="calendar-range-label"></span></div>
+        <button id="calendar-today" class="calendar-today">Today</button>
+        <button id="calendar-next" class="calendar-nav">→</button>
+      </div>
+      <div class="calendar-layout">
+        <div class="calendar-shell motion-card">
+          <div class="calendar-weekdays"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+          <div id="calendar-grid" class="calendar-grid"></div>
+        </div>
+        <aside class="calendar-agenda phase3-panel motion-card">
+          <div class="phase3-section-title"><h3>Upcoming agenda</h3></div>
+          <div id="calendar-agenda-list"></div>
+        </aside>
+      </div>
+      <div id="calendar-editor" class="calendar-editor" aria-hidden="true">
+        <div class="calendar-editor-card">
+          <div class="phase3-section-title"><h3 id="calendar-editor-title">Schedule lesson</h3><button id="calendar-editor-close" class="mini-danger">Close</button></div>
+          <input type="hidden" id="cal-event-id">
+          <div class="field"><label>Title</label><input id="cal-title" type="text" placeholder="e.g. Unit II — EDA Workshop"></div>
+          <div class="two-col-fields"><div class="field"><label>Start</label><input id="cal-start" type="datetime-local"></div><div class="field"><label>End</label><input id="cal-end" type="datetime-local"></div></div>
+          <div class="two-col-fields"><div class="field"><label>Type</label><select id="cal-type"><option value="lecture">Lecture</option><option value="lab">Lab</option><option value="quiz">Quiz</option><option value="assignment">Assignment</option><option value="revision">Revision</option><option value="meeting">Meeting</option><option value="other">Other</option></select></div><div class="field"><label>Status</label><select id="cal-status"><option value="planned">Planned</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option></select></div></div>
+          <div class="field"><label>Link saved resource</label><select id="cal-resource"><option value="">No linked resource</option></select></div>
+          <div class="three-col-fields"><div class="field"><label>Course</label><input id="cal-course" type="text"></div><div class="field"><label>Subject</label><input id="cal-subject" type="text"></div><div class="field"><label>Topic</label><input id="cal-topic" type="text"></div></div>
+          <div class="field"><label>Teacher notes</label><textarea id="cal-notes" rows="3" placeholder="Preparation notes, room, materials or homework"></textarea></div>
+          <label class="toggle-line"><input id="cal-shared" type="checkbox" checked><span class="toggle-ui"></span> Share with students</label>
+          <div class="calendar-editor-actions"><button id="btn-save-calendar-event" class="gen-btn">Save event</button><button id="btn-delete-calendar-event" class="mini-danger" style="display:none">Delete</button></div>
+          <div id="calendar-editor-status" class="phase3-status"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PHASE 7 PERSONALIZED LEARNING -->
+    <section id="view-personalized" class="view">
+      <div class="phase3-view-head phase78-head">
+        <div>
+          <div class="phase-label phase7-label"><span></span> Phase 7 Personalized AI Learning Engine</div>
+          <h2>Adaptive Teaching &amp; Learning Studio</h2>
+          <p class="hero-sub">Personalize lesson plans, detect student learning levels, build adaptive notes, review content quality, convert difficulty, generate exam boosters, summaries and flashcards.</p>
+        </div>
+        <div class="phase78-live-pill"><i></i> Adaptive AI</div>
+      </div>
+
+      <div class="phase78-profile-grid">
+        <div class="phase78-panel motion-card">
+          <div class="panel-kicker">Learning Intelligence</div>
+          <h3>Student Learning Level Detection</h3>
+          <p>Quiz attempts are analysed server-side to classify the learner as Needs revision, Beginner, Intermediate or Advanced.</p>
+          <div class="field phase78-teacher-only"><label>Select student</label><select id="p7-student-select"><option value="">Select a student with quiz attempts</option></select></div>
+          <button class="secondary-ai-btn" id="btn-p7-profile">Refresh learning profile</button>
+          <div id="p7-profile-output" class="phase78-output compact-output"><p class="empty-note">Profile insights will appear here.</p></div>
+        </div>
+
+        <div class="phase78-panel motion-card">
+          <div class="panel-kicker">Personalized Generator</div>
+          <h3>Choose an AI learning action</h3>
+          <div class="two-col-fields">
+            <div class="field"><label>Action</label><select id="p7-action">
+              <option value="lesson-personalization">AI Lesson Plan Personalization</option>
+              <option value="adaptive-notes">Adaptive Notes Generator</option>
+              <option value="feedback">AI Feedback on Generated Content</option>
+              <option value="difficulty-converter">Difficulty Converter</option>
+              <option value="eli5">Explain Like I’m 5 Mode</option>
+              <option value="exam-booster">Exam Booster Mode</option>
+              <option value="summary">AI Auto Summary</option>
+              <option value="flashcards">Flashcard Generator</option>
+            </select></div>
+            <div class="field"><label>Saved source resource</label><select id="p7-resource"><option value="">Use topic only</option></select></div>
+          </div>
+          <div class="three-col-fields">
+            <div class="field"><label>Course</label><input id="p7-course" value="B.Tech"></div>
+            <div class="field"><label>Subject</label><input id="p7-subject" value="Machine Learning"></div>
+            <div class="field"><label>Topic</label><input id="p7-topic" value="Supervised Learning"></div>
+          </div>
+          <div class="three-col-fields">
+            <div class="field"><label>Class performance</label><select id="p7-performance"><option>Weak</option><option selected>Average</option><option>Advanced</option></select></div>
+            <div class="field"><label>Teaching style</label><select id="p7-style"><option>Theory</option><option>Practical</option><option>Activity-based</option></select></div>
+            <div class="field"><label>Language</label><select id="p7-language"><option>English</option><option>Hindi</option><option>Hinglish</option></select></div>
+          </div>
+          <div class="two-col-fields">
+            <div class="field"><label>Adaptive notes mode</label><select id="p7-notes-mode"><option>Short exam notes</option><option selected>Detailed classroom notes</option><option>Easy explanation notes</option><option>Last-minute revision notes</option><option>Important questions only</option></select></div>
+            <div class="field"><label>Difficulty / format conversion</label><select id="p7-target-mode"><option>Make it easier</option><option>Make it advanced</option><option>Convert to exam format</option><option>Convert to viva format</option><option>Convert to PPT points</option><option>Convert to assignment</option></select></div>
+          </div>
+          <button id="btn-p7-generate" class="gen-btn phase78-action"><span>✦</span> Generate personalized output</button>
+          <div id="p7-status" class="phase3-status">Select an action and generate a teacher-reviewable draft.</div>
+        </div>
+      </div>
+      <div id="p7-output" class="phase78-output main-output"><p class="empty-note">Phase 7 generated content will appear here.</p></div>
+    </section>
+
+    <!-- PHASE 8 ACADEMIC SUITE -->
+    <section id="view-academic" class="view">
+      <div class="phase3-view-head phase78-head">
+        <div>
+          <div class="phase-label phase8-label"><span></span> Phase 8 Academic Planning &amp; Assessment Suite</div>
+          <h2>Course Planning, Question Papers &amp; Faculty Tools</h2>
+          <p class="hero-sub">Build unit-wise plans, blueprint-validated exams, rubrics, revision schedules, case studies, coding labs and attendance-based catch-up reminders.</p>
+        </div>
+        <div class="phase78-live-pill p8"><i></i> Constraint-Checked</div>
+      </div>
+
+      <div class="phase78-academic-grid">
+        <div class="phase78-panel motion-card">
+          <div class="panel-kicker">Academic Generator</div>
+          <div class="field"><label>Tool</label><select id="p8-action">
+            <option value="course-planner">Unit-Wise Course Planner</option>
+            <option value="question-paper" selected>AI Question Paper Generator</option>
+            <option value="rubric">AI Rubric Generator</option>
+            <option value="revision-plan">Smart Revision Plan</option>
+            <option value="case-study">AI Case Study Generator</option>
+            <option value="coding-lab">Coding Lab Assistant</option>
+          </select></div>
+          <div class="three-col-fields">
+            <div class="field"><label>Course</label><input id="p8-course" value="B.Tech"></div>
+            <div class="field"><label>Subject</label><input id="p8-subject" value="Machine Learning"></div>
+            <div class="field"><label>Topic</label><input id="p8-topic" value="Core Machine Learning Concepts"></div>
+          </div>
+          <div class="field"><label>Units / topics (one per line)</label><textarea id="p8-units" rows="4">Unit 1 — Statistical Concepts and ML Introduction
+Unit 2 — Exploratory Data Analysis
+Unit 3 — Supervised Learning
+Unit 4 — Clustering and Dimensionality Reduction</textarea></div>
+
+          <div id="p8-question-fields" class="phase78-subpanel">
+            <div class="three-col-fields">
+              <div class="field"><label>Exam type</label><select id="p8-exam-type"><option>Unit Test</option><option>Internal Exam</option><option selected>Mid-Term</option><option>End-Semester</option></select></div>
+              <div class="field"><label>Total marks</label><input id="p8-total-marks" type="number" min="10" max="200" value="50"></div>
+              <div class="field"><label>Duration (minutes)</label><input id="p8-duration" type="number" min="15" max="300" value="90"></div>
+            </div>
+            <div class="field"><label>Question types</label><div class="phase78-check-grid" id="p8-question-types">
+              <label><input type="checkbox" value="MCQ" checked> MCQ</label>
+              <label><input type="checkbox" value="2 marks" checked> 2 marks</label>
+              <label><input type="checkbox" value="5 marks" checked> 5 marks</label>
+              <label><input type="checkbox" value="10 marks" checked> 10 marks</label>
+              <label><input type="checkbox" value="Case study" checked> Case study</label>
+              <label><input type="checkbox" value="Numerical"> Numerical</label>
+              <label><input type="checkbox" value="Coding question"> Coding question</label>
+            </div></div>
+            <div class="phase3-section-title"><h3>Question Paper Blueprint</h3><button type="button" id="btn-p8-add-unit" class="mini-refresh">+ Add unit</button></div>
+            <div id="p8-blueprint" class="phase78-blueprint"></div>
+            <div id="p8-blueprint-status" class="phase3-status">Blueprint must equal the total marks.</div>
+          </div>
+
+          <div class="two-col-fields">
+            <div class="field"><label>Assignment / rubric title</label><input id="p8-assignment-title" value="AI/ML Course Project"></div>
+            <div class="field"><label>Exam date</label><input id="p8-exam-date" type="date"></div>
+          </div>
+          <div class="three-col-fields">
+            <div class="field"><label>Daily revision minutes</label><input id="p8-daily-minutes" type="number" value="60" min="15" max="360"></div>
+            <div class="field"><label>Programming language</label><select id="p8-language"><option>Python</option><option>Java</option><option>C++</option><option>JavaScript</option><option>C</option></select></div>
+            <div class="field"><label>Lab programs</label><input id="p8-program-count" type="number" min="3" max="20" value="10"></div>
+          </div>
+          <div class="field"><label>Case-study context / additional instructions</label><textarea id="p8-context" rows="3" placeholder="Industry, scenario, constraints or faculty instructions"></textarea></div>
+          <button id="btn-p8-generate" class="gen-btn phase78-action"><span>✦</span> Generate academic output</button>
+          <div id="p8-status" class="phase3-status">Question-paper totals are validated on the server before generation.</div>
+        </div>
+
+        <div class="phase78-panel motion-card attendance-panel">
+          <div class="panel-kicker">Attendance Intelligence</div>
+          <h3>Attendance-Based Reminder</h3>
+          <p>Record a missed lesson and generate a catch-up recommendation with notes and a short quiz.</p>
+          <div class="field"><label>Student</label><select id="p8-att-student"><option value="">Select student</option></select></div>
+          <div class="two-col-fields"><div class="field"><label>Date</label><input id="p8-att-date" type="date"></div><div class="field"><label>Status</label><select id="p8-att-status"><option value="absent">Absent</option><option value="late">Late</option><option value="present">Present</option><option value="excused">Excused</option></select></div></div>
+          <div class="field"><label>Missed topic</label><input id="p8-att-topic" value="DBMS Normalization"></div>
+          <div class="field"><label>Notes</label><textarea id="p8-att-notes" rows="2" placeholder="Optional teacher note"></textarea></div>
+          <button id="btn-p8-attendance" class="secondary-ai-btn">Record &amp; create reminder</button>
+          <div id="p8-att-status-text" class="phase3-status"></div>
+          <div id="p8-attendance-list" class="attendance-list"><p class="empty-note">Recent attendance reminders will appear here.</p></div>
+        </div>
+      </div>
+      <div id="p8-output" class="phase78-output main-output"><p class="empty-note">Phase 8 generated output will appear here.</p></div>
+    </section>
+
+
+
+    <!-- PHASE 9 COLLABORATION -->
+    <section id="view-collaboration" class="view">
+      <div class="phase3-view-head p9-head"><div><div class="phase-label p9-label"><span></span> Phase 9 Collaboration & Content Management</div><h2>Faculty Collaboration, Review & Department Intelligence</h2><p class="hero-sub">Track workload, organise shared department folders, review resources, preserve versions, collect ratings and share approved resources through QR codes.</p></div><div class="phase78-live-pill p9"><i></i> Collaborative</div></div>
+      <div id="p9-workload" class="p9-workload"></div>
+      <div class="p9-grid">
+        <div class="phase78-panel motion-card"><div class="panel-kicker">Department Workspace</div><div class="three-col-fields"><div class="field"><label>Name</label><input id="p9-dept-name" placeholder="Computer Science"></div><div class="field"><label>Code</label><input id="p9-dept-code" placeholder="CSE"></div><div class="field"><label>Description</label><input id="p9-dept-desc" placeholder="Faculty resource workspace"></div></div><button id="btn-p9-create-dept" class="secondary-ai-btn">Create department</button><hr><div class="three-col-fields"><div class="field"><label>Department</label><select id="p9-department"></select></div><div class="field"><label>Member email</label><input id="p9-member-email" type="email" placeholder="faculty@college.edu"></div><div class="field"><label>Access</label><select id="p9-member-role"><option value="member">Member</option><option value="reviewer">Reviewer</option></select></div></div><button id="btn-p9-member" class="secondary-ai-btn">Add / update member</button><div class="field"><label>Department dashboard</label><select id="p9-dashboard-dept"></select></div><div id="p9-dept-dashboard"><p class="empty-note">Select a department.</p></div></div>
+        <div class="phase78-panel motion-card"><div class="panel-kicker">Resource Collaboration</div><div class="field"><label>Resource</label><select id="p9-resource"></select></div><div class="two-col-fields"><div class="field"><label>Folder</label><input id="p9-folder" value="General"></div><div class="field"><label>Status</label><span id="p9-workflow-badge" class="workflow-badge">draft</span></div></div><button id="btn-p9-assign" class="secondary-ai-btn">Add to selected department folder</button><div class="field"><label>Review note</label><textarea id="p9-review-note" rows="2" placeholder="Why this is approved/rejected or what needs revision"></textarea></div><div class="p9-workflow-actions"><button data-p9-workflow="submit">Submit for Review</button><button data-p9-workflow="approve" class="approve">Approve</button><button data-p9-workflow="reject" class="reject">Reject</button><button data-p9-workflow="reopen">Reopen Draft</button></div><div class="two-col-fields"><div class="field"><label>Version label</label><select id="p9-version-label"><option>Version 1</option><option>Version 2</option><option>Reviewed Version</option><option>Final Approved Version</option></select></div><button id="btn-p9-version" class="secondary-ai-btn p9-inline">Create snapshot</button></div><div id="p9-versions" class="p9-list"></div></div>
+      </div>
+      <div class="p9-grid">
+        <div class="phase78-panel motion-card"><div class="panel-kicker">Comments & Review</div><div class="two-col-fields"><div class="field"><label>Comment type</label><select id="p9-comment-type"><option value="comment">Comment</option><option value="review">Review</option><option value="change-request">Change request</option><option value="approval-note">Approval note</option></select></div><div class="field"><label>Message</label><input id="p9-comment-text" placeholder="Write feedback for collaborators"></div></div><button id="btn-p9-comment" class="secondary-ai-btn">Post comment</button><div id="p9-comments" class="p9-comments"></div></div>
+        <div class="phase78-panel motion-card"><div class="panel-kicker">Ratings & QR Sharing</div><div class="three-col-fields"><div class="field"><label>Rating</label><select id="p9-rating"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select></div><div class="field"><label>Tag</label><select id="p9-rating-tag"><option>Useful</option><option>Needs edit</option><option>Best for exam</option><option>Best for class explanation</option><option>Well researched</option></select></div><div class="field"><label>Review</label><input id="p9-rating-review" placeholder="Optional review"></div></div><div class="p10-actions"><button id="btn-p9-rate" class="secondary-ai-btn">Save rating</button><button id="btn-p9-qr" class="gen-btn">Create QR share link</button></div><h3>Review queue</h3><div id="p9-review-queue" class="p9-list"></div></div>
+      </div><div id="p9-status" class="phase3-status">Phase 9 workspace ready.</div>
+    </section>
+
+    <!-- PHASE 10 INTELLIGENCE -->
+    <section id="view-intelligence" class="view">
+      <div class="phase3-view-head p10-head"><div><div class="phase-label p10-label"><span></span> Phase 10 Multimedia, Search & Platform Intelligence</div><h2>Voice, Video, Diagrams, Safety & Semantic Discovery</h2><p class="hero-sub">Transform resources into audio explanations and video scripts, render academic diagrams, analyse originality risk, review AI safety and search by meaning rather than exact keywords.</p></div><div class="phase78-live-pill p10"><i></i> Multimodal</div></div>
+      <div class="p10-layout"><div class="phase78-panel p10-controls motion-card"><div class="field"><label>Source resource</label><select id="p10-resource"></select></div><div class="three-col-fields"><div class="field"><label>Topic</label><input id="p10-topic" value="DBMS Normalization"></div><div class="field"><label>Subject</label><input id="p10-subject" value="Database Management Systems"></div><div class="field"><label>Language</label><select id="p10-language"><option>English</option><option>Hindi</option><option>Hinglish</option></select></div></div><div class="field"><label>Custom content / context</label><textarea id="p10-text" rows="5" placeholder="Paste notes or instructions when no saved resource is selected. For AI Smart Tables, paste the messy table/data here."></textarea></div><div class="p10-tool-grid"><button id="btn-p10-voice"><b>🎙</b><span>AI Voice Explanation</span></button><button id="btn-p10-video"><b>🎬</b><span>Video Script Generator</span></button><button id="btn-p10-diagram"><b>◈</b><span>Diagram Generator</span></button><button id="btn-p10-chart"><b>📊</b><span>Chart Generator</span></button><button id="btn-p10-smart-table"><b>▦</b><span>AI Smart Tables</span></button><button id="btn-p10-web-search"><b>🌍</b><span>AI Internet Search</span></button><button id="btn-p10-image-search"><b>🖼</b><span>AI Image Finder</span></button><button id="btn-p10-illustration-search"><b>🎨</b><span>AI Illustration Finder</span></button><button id="btn-p10-infographic"><b>🧾</b><span>AI Infographic Generator</span></button><button id="btn-p10-whiteboard"><b>🖊</b><span>AI Whiteboard</span></button></div>
+
+        <div id="qwb-panel" class="qwb-panel" style="display:none;">
+          <div class="qwb-toolbar">
+            <input id="qwb-title" type="text" placeholder="Board title" value="Untitled board">
+            <button id="btn-qwb-note" class="gen-btn phase3-action qle-btn">+ Sticky note</button>
+            <button id="btn-qwb-shape" class="gen-btn phase3-action qle-btn">+ Shape</button>
+            <select id="qwb-color"><option value="#fde68a">Yellow</option><option value="#bfdbfe">Blue</option><option value="#bbf7d0">Green</option><option value="#fecaca">Red</option><option value="#e9d5ff">Purple</option></select>
+            <button id="btn-qwb-save" class="gen-btn phase3-action qle-btn">Save board</button>
+            <select id="qwb-load"><option value="">Load saved board…</option></select>
+            <button id="btn-qwb-clear" class="gen-btn phase3-action qle-btn" style="background:transparent;border:1px solid #ccc;">Clear</button>
+            <button id="btn-qwb-close" class="gen-btn phase3-action qle-btn" style="background:transparent;border:1px solid #ccc;">Close</button>
+          </div>
+          <p class="qwb-note">Single-user canvas — drag notes/shapes around, double-click text to edit. (Real-time multi-user co-editing isn't wired up — that needs a live-sync server this project doesn't run.)</p>
+          <div id="qwb-canvas" class="qwb-canvas"></div>
+        </div><div class="three-col-fields"><div class="field"><label>Voice style</label><select id="p10-voice-style"><option>Clear classroom explanation</option><option>Slow revision narration</option><option>Energetic Hinglish teacher</option><option>Formal academic lecture</option></select></div><div class="field"><label>Gemini TTS voice</label><select id="p10-voice"><option>Kore</option><option>Puck</option><option>Charon</option><option>Fenrir</option><option>Aoede</option></select></div><div class="field"><label>Video format</label><select id="p10-video-format"><option>YouTube lecture script</option><option>5-minute explanation</option><option>Reel / Shorts script</option><option>Classroom explanation script</option></select></div></div><div class="field"><label>Diagram type</label><select id="p10-diagram-type"><option value="flowchart">Flowchart</option><option value="mind-map">Mind map</option><option value="er">ER diagram</option><option value="architecture">Architecture diagram</option><option value="uml">UML class diagram</option><option value="sequence">Sequence diagram</option><option value="state">State diagram</option><option value="process">Process diagram</option><option value="comparison">Comparison chart</option><option value="timeline">Timeline</option></select></div><div class="field"><label>Chart type</label><select id="p10-chart-type"><option value="pie">Pie chart</option><option value="line">Line graph</option><option value="area">Area chart</option><option value="bar">Bar chart</option><option value="histogram">Histogram</option><option value="scatter">Scatter plot</option><option value="sankey">Sankey diagram</option><option value="gantt">Gantt chart</option><option value="timeline">Timeline chart</option></select></div></div>
+      <div class="phase78-panel motion-card"><div class="panel-kicker">Semantic Smart Search</div><div class="select-action-row"><input id="p10-search" placeholder="Try: accounts ke basic notes"><button id="btn-p10-search" class="gen-btn">Search</button></div><p class="recent-meta">Example matches can include Journal Entry, Ledger, Trial Balance and Accounting Cycle even without exact keyword overlap.</p><hr><div class="panel-kicker">Assignment Similarity & Originality Risk</div><textarea id="p10-risk-text" rows="6" placeholder="Paste assignment text (minimum 80 characters)"></textarea><button id="btn-p10-risk" class="secondary-ai-btn">Analyse risk</button><hr><div class="panel-kicker">AI Safety & Claim Verification</div><select id="p10-safety-resource"></select><div class="field"><label>Verification syllabus</label><select id="p10-fact-syllabus"><option value="">Select indexed syllabus</option></select></div><label class="p10-inline-check"><input id="p10-include-internal" type="checkbox"> Also compare with accessible internal resources</label><textarea id="p10-safety-text" rows="4" placeholder="Or paste custom generated content"></textarea><div class="p10-actions"><button id="btn-p10-factual" class="secondary-ai-btn">Verify factual claims</button><button id="btn-p10-safety" class="gen-btn">Run full safety review</button></div></div></div>
+      <div id="p10-status" class="phase3-status">Choose a Phase 10 tool.</div><div id="p10-output" class="phase78-output main-output"><p class="empty-note">Multimedia, diagram, search and review results will appear here.</p></div>
+    </section>
+
+    <!-- AI VISUAL LEARNING ENGINE — CONCEPT EXPLAINER -->
+    <section id="view-explainer" class="view">
+      <div class="phase3-view-head">
+        <div>
+          <div class="phase-label"><span></span> AI Visual Learning Engine</div>
+          <h2>Concept Explainer</h2>
+          <p class="hero-sub">Sirf ek topic do — AI decide karta hai ki use kaise samjhana best hai (Text / Diagram / Animation / Voice / Quiz), aur sab ek saath generate kar deta hai.</p>
+        </div>
+        <div class="phase3-live-pill"><i></i> Auto multi-modal</div>
+      </div>
+
+      <div class="qce-input-row motion-card">
+        <input id="qce-topic" type="text" placeholder="e.g. Pass by Value and Pass by Reference, Recursion, Deadlock, Merge Sort..." value="Recursion">
+        <button id="btn-qce-explain" class="gen-btn phase3-action">Explain this topic</button>
+      </div>
+      <div id="qce-status" class="phase3-status">AI pehle concept type analyze karta hai, phir sirf wahi modes generate karta hai jo genuinely madad karte hain.</div>
+
+      <div id="qce-output" class="qce-output"></div>
+    </section>
+
+    <!-- ANALYTICS -->
+    <section id="view-analytics" class="view">
+      <div class="phase3-view-head"><div><div class="phase-label"><span></span> Phase 3 Learning Intelligence</div><h2>Performance Analytics</h2><p class="hero-sub">Live auto-grading insights across quizzes, topics, Bloom levels, course outcomes and student attempts.</p></div><div class="phase3-live-pill"><i></i> Live metrics</div></div>
+      <div id="analytics-body"></div>
+    </section>
+
+    <!-- ADMIN -->
+    <section id="view-admin" class="view">
+      <h2 style="font-size:22px;">Admin Dashboard</h2>
+      <p class="hero-sub" style="margin-bottom:18px;">Platform-wide usage plus Phase 6 zero-trust security alerts, audit logs and incident intelligence.</p>
+      <div id="admin-body"></div>
+    </section>
+  </main>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal-box" id="modal-box"></div>
+</div>
+
+<script src="vendor/motion-umd.js"></script>
+<script src="vendor/human.js"></script>
+<script src="js/config.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/api.js"></script>
+<script src="js/syllabus.js"></script>
+<script src="js/phase4-api.js"></script>
+<script src="js/media.js"></script>
+<script src="js/export.js"></script>
+<script src="js/generator.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/hub.js"></script>
+<script src="js/portal.js"></script>
+<script src="js/phase3-api.js"></script>
+<script src="js/identity.js"></script>
+<script src="js/quizzes.js"></script>
+<script src="js/theme-gallery.js"></script>
+<script src="js/whiteboard.js"></script>
+<script src="js/presenterAvatar.js"></script>
+<script src="js/conceptExplainer.js"></script>
+<script src="js/presentations.js"></script>
+<script src="js/presentation-quickgen.js"></script>
+<script src="js/calendar.js"></script>
+<script src="js/analytics.js"></script>
+<script src="js/phase78-api.js"></script>
+<script src="js/personalized.js"></script>
+<script src="js/academic-suite.js"></script>
+<script src="js/phase9-api.js"></script>
+<script src="js/collaboration.js"></script>
+<script src="js/phase10-api.js"></script>
+<script src="js/intelligence.js"></script>
+<script src="js/pwa.js"></script>
+<script src="js/admin.js"></script>
+<script src="js/modal.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/authflow.js"></script>
+<script src="js/init.js"></script>
+<script src="js/animations.js"></script>
+<script src="js/motion-ui.js"></script>
+<script src="js/ui-clean-motion.js"></script>
+</body>
+</html>

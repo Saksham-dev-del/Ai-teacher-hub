@@ -1,0 +1,26 @@
+AI TEACHER RESOURCE HUB — PHASE 7 + PHASE 8 CHANGELOG
+
+PHASE 7 — PERSONALIZED AI LEARNING ENGINE
+- Added lesson-plan personalization by class performance, teaching style and language.
+- Added server-side learning-level detection from submitted quiz attempts.
+- Added weak-topic and Bloom-level diagnosis.
+- Added adaptive notes modes.
+- Added AI feedback, difficulty conversion, beginner mode, exam booster, summaries and flashcards.
+- Added LearningProfile and PhaseArtifact MongoDB models.
+- Added Personalized AI navigation view with animated profile ring, metrics and flip flashcards.
+
+PHASE 8 — ACADEMIC PLANNING AND ASSESSMENT SUITE
+- Added unit-wise course planner.
+- Added question papers for Unit Test, Internal Exam, Mid-Term and End-Semester.
+- Added MCQ, 2-mark, 5-mark, 10-mark, case-study, numerical and coding-question support.
+- Added exact-mark blueprint validation and server-side construction.
+- Added rubrics, revision plans, case studies and coding lab assistant.
+- Added attendance-based catch-up reminders.
+- Added PhaseArtifact and AttendanceRecord persistence and audit logging.
+- Added animated Academic Suite UI with editable blueprint rows and responsive tables.
+
+SECURITY / COMPATIBILITY
+- Existing Phase 5/6 zero-trust security remains enabled.
+- New generation routes are authenticated, role-protected and rate-limited.
+- Student profiles are scoped to the student or teachers whose quizzes the student attempted.
+- All Phase 2–8 smoke tests pass.

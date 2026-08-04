@@ -1,0 +1,111 @@
+const { PDFDocument, StandardFonts, rgb } = require('pdf-lib');
+const { exportDetailedPdf } = require('./detailedPdf');
+
+const TYPE_COLORS = {
+  'Lesson Plan': '2F5D50', 'Notes': 'E0A93A', 'Quiz': '3A5A78', 'Assignment': 'B5573F',
+  'Classroom Activity': '5B6B62', 'Viva Questions': '6B4C6E', 'Study Material': '2F5D50'
+};
+
+function hexToColor(hex) {
+  const h = (hex || '2F5D50').replace('#', '');
+  return rgb(parseInt(h.slice(0, 2), 16) / 255, parseInt(h.slice(2, 4), 16) / 255, parseInt(h.slice(4, 6), 16) / 255);
+}
+
+function safePdfText(text) {
+  return String(text || '').replace(/[^\x20-\x7E\n]/g, '?');
+}
+
+function wrapText(text, font, size, maxWidth) {
+  const words = safePdfText(text).split(/\s+/).filter(Boolean);
+  const lines = [];
+  let line = '';
+  for (const word of words) {
+    const test = line ? `${line} ${word}` : word;
+    if (font.widthOfTextAtSize(test, size) > maxWidth && line) {
+      lines.push(line); line = word;
+    } else line = test;
+  }
+  if (line) lines.push(line);
+  return lines.length ? lines : [''];
+}
+
+async function exportPdf(draft, options = {}) {
+  if (Array.isArray(draft.reportSections) && draft.reportSections.length) return exportDetailedPdf(draft, options);
+  const PAGE = [595.28, 841.89];
+  const margin = 48;
+  const color = hexToColor(TYPE_COLORS[draft.type]);
+  const pdfDoc = await PDFDocument.create();
+  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+  const italicFont = await pdfDoc.embedFont(StandardFonts.HelveticaOblique);
+  let page = pdfDoc.addPage(PAGE);
+  let y = PAGE[1] - margin;
+  const maxWidth = PAGE[0] - margin * 2;
+
+  function newPage() { page = pdfDoc.addPage(PAGE); y = PAGE[1] - margin; }
+  function ensureSpace(needed) { if (y - needed < margin + 10) newPage(); }
+  function heading(text, size = 12, headingColor = color) {
+    ensureSpace(size + 15);
+    page.drawText(safePdfText(text), { x: margin, y, size, font: boldFont, color: headingColor });
+    y -= size + 8;
+  }
+  function paragraph(text, size = 9.7, indent = 0, textColor = rgb(0.13, 0.13, 0.13)) {
+    for (const line of wrapText(text, font, size, maxWidth - indent)) {
+      ensureSpace(size + 5);
+      page.drawText(line, { x: margin + indent, y, size, font, color: textColor });
+      y -= size + 4.2;
+    }
+    y -= 5;
+  }
+
+  const h = PAGE[1];
+  page.drawRectangle({ x: 0, y: h - 70, width: PAGE[0], height: 70, color });
+  page.drawText(safePdfText(String(draft.type || '').toUpperCase()), { x: margin, y: h - 27, size: 10, font: boldFont, color: rgb(1, 1, 1) });
+  page.drawText(safePdfText(draft.topic || ''), { x: margin, y: h - 51, size: 17, font: boldFont, color: rgb(1, 1, 1) });
+  y = h - 96;
+  paragraph(`${draft.course} | ${draft.subject} | ${draft.difficulty} | ${draft.duration} | Style: ${draft.style}${draft.syllabusName ? ` | RAG: ${draft.syllabusName}` : ''}`, 9.1, 0, rgb(0.28, 0.28, 0.28));
+
+  if (draft.sections && draft.sections.length) {
+    for (const section of draft.sections) { heading(section.h || ''); paragraph(section.b || ''); y -= 4; }
+  } else if (draft.qa && draft.qa.length) {
+    for (const item of draft.qa) { heading(item.q || '', 10.5, rgb(0.12, 0.12, 0.12)); paragraph(item.a || '', 9.4, 10, rgb(0.38, 0.38, 0.38)); }
+  }
+
+  if (draft.qualityScore) {
+    heading('AI Quality Score', 14);
+    paragraph(`${draft.qualityScore.overall || 0}/100 - ${draft.qualityScore.grade || ''}. Teacher review required.`, 11);
+    const m = draft.qualityScore.metrics || {};
+    paragraph(`Completeness ${m.completeness || 0}% | Clarity ${m.clarity || 0}% | Bloom ${m.bloomAlignment || 0}% | CO alignment ${m.outcomeAlignment || 0}% | Grounding ${m.syllabusGrounding || 0}%`, 9.2);
+  }
+
+  if (draft.bloomQuestions && draft.bloomQuestions.length) {
+    heading("Bloom's Taxonomy Questions", 14);
+    draft.bloomQuestions.forEach((item, index) => {
+      heading(`${index + 1}. [${item.level || 'Bloom'}] ${item.question || ''}`, 10.2, rgb(0.15, 0.15, 0.15));
+      paragraph(`Suggested answer: ${item.answer || ''}`, 9.2, 8);
+    });
+  }
+
+  if (draft.courseOutcomes && draft.courseOutcomes.length) {
+    heading('Course Outcomes', 14);
+    draft.courseOutcomes.forEach((item) => paragraph(`${item.code || 'CO'}: ${item.text || ''}`, 9.4));
+  }
+
+  if (draft.coMapping && draft.coMapping.length) {
+    heading('Course Outcome Mapping', 14);
+    draft.coMapping.forEach((item) => paragraph(`${item.courseOutcome}: ${(item.matchedSections || []).join(', ')} | Bloom: ${(item.bloomLevels || []).join(', ')} | Alignment: ${item.alignmentScore || 0}%\n${item.justification || ''}`, 9.2));
+  }
+
+  if (draft.grounding && draft.grounding.retrievedChunks && draft.grounding.retrievedChunks.length) {
+    heading('Syllabus Evidence Used', 14);
+    draft.grounding.retrievedChunks.forEach((source) => paragraph(`[${source.sourceId || 'S'}] ${source.preview || ''}`, 8.8));
+  }
+
+  ensureSpace(30);
+  page.drawText('Generated by AI Teacher Resource Hub - AI-assisted, teacher-reviewed draft', {
+    x: margin, y: Math.max(margin - 8, 28), size: 8, font: italicFont, color: rgb(0.58, 0.58, 0.58)
+  });
+  return pdfDoc.save();
+}
+
+module.exports = { exportPdf };

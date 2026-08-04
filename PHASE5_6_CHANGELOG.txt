@@ -1,0 +1,28 @@
+AI Teacher Resource Hub — Phase 5 + Phase 6 Changelog
+
+PHASE 5 — SECURITY HARDENING & ANTI-TAMPER
+- Camera/fullscreen/tab/clipboard/shortcut/network integrity monitoring.
+- Server heartbeat, secure autosave and server-controlled quiz deadline.
+- Strict PDF/image extension, MIME and magic-byte validation.
+- Dangerous double-extension blocking and private authenticated media delivery.
+- Password policy, failed-login lockout and per-route rate limits.
+- CSP, origin checking, request-size protection and NoSQL/prototype-key filtering.
+
+PHASE 6 — ZERO-TRUST SECURITY
+- Correct answers remain backend-only.
+- Server-only grading; client-provided score is never trusted.
+- Per-attempt random token, one-time submission nonce and device binding.
+- Randomized question/option order stored per attempt.
+- Anti-replay sequence validation for heartbeats, autosaves and integrity events.
+- Atomic final submission and attempt locking.
+- Short access tokens, HttpOnly rotating refresh cookies and reuse detection.
+- Token-version session revocation and logout-all support.
+- Audit logs, security alerts and Admin Zero-Trust Command Center.
+- Prompt-injection scanning/neutralization for uploaded syllabus documents.
+- Private file storage and authenticated media access.
+
+VERIFICATION
+- Phase 2, Phase 3, Phase 4, Secure, Phase 5 and Phase 6 smoke tests passed.
+- Backend and frontend JavaScript syntax checks passed.
+- Health endpoint starts in Phase 6 mode.
+- npm audit --omit=dev reported 0 known vulnerabilities at packaging time.

@@ -1,0 +1,25 @@
+FULL CLAIM VERIFICATION + STRICT FACE-PRESENCE UPGRADE
+
+1. Claim-Level Factual Verification
+- Extracts factual statements from saved resources or custom text.
+- Verifies each claim against selected indexed syllabus chunks.
+- Optional comparison against accessible internal resources.
+- Supported / Partially Supported / Unsupported / Conflicting verdicts.
+- Confidence score, source excerpts, source match, syllabus source-gap detection.
+- Low-confidence statement identification and time-sensitive/outdated warnings.
+- Full AI Safety Review automatically includes factual verification when a syllabus is selected.
+
+2. Strict Camera Face Presence
+- Bundled local Human/BlazeFace detector; camera footage remains local and is not uploaded.
+- Single face must be verified before quiz start.
+- Continuous face checks during quiz.
+- Default 2-second face-absence grace period with visible cancellation countdown.
+- Auto-cancel and score 0 if the face remains outside the frame.
+- Immediate cancellation for multiple faces or strict detector failure.
+- Teacher-configurable face absence grace and policy controls.
+
+3. Verification
+- Phase 2 through Phase 10 smoke tests passed.
+- Secure quiz tests passed.
+- New factual/face smoke test passed.
+- npm audit reported 0 known production vulnerabilities at packaging time.

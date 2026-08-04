@@ -1,0 +1,32 @@
+AI Teacher Resource Hub - Identity Verification Upgrade
+Verification Report
+
+Implemented:
+- Teacher/admin-approved student identity enrollment
+- Encrypted face descriptor and enrollment selfie storage
+- Pre-exam live face match and liveness/anti-spoof checks
+- Device-bound, short-lived signed identity proof
+- Continuous random identity rechecks during the quiz
+- Repeated mismatch and severe mismatch automatic cancellation
+- Multiple-face, camera interruption, full-screen/tab and 2-second face-absence controls retained
+- Server-side grading, timer, audit logs and zero-trust quiz protections retained
+
+Automated checks passed:
+- Phase 2 smoke tests
+- Phase 3 smoke tests
+- Phase 4 smoke tests
+- Phase 5 smoke tests
+- Phase 6 smoke tests
+- Phase 7 and Phase 8 smoke tests
+- Phase 9 and Phase 10 smoke tests
+- Secure quiz/upload/resource-view tests
+- Factual verification and strict face-presence tests
+- Identity encryption, signed proof, schema, routes, local models and continuous recheck tests
+- npm audit --omit=dev: 0 known vulnerabilities at packaging time
+
+Important deployment notes:
+- Set FACE_IDENTITY_SECRET before the first identity enrollment and keep it unchanged.
+- Camera footage is not continuously recorded or uploaded. One consented enrollment selfie and a face descriptor are encrypted at rest.
+- Browser-side face/liveness checks are defense-in-depth and can be affected by lighting, camera quality, accessibility needs or client tampering.
+- For high-stakes exams, use teacher review, an appeal/retest process and a managed lockdown/kiosk environment.
+- Final webcam behavior must be tested on the target Chrome/Edge browser and device.

@@ -1,0 +1,1 @@
+Human browser runtime is bundled under the project license from @vladmandic/human. See https://github.com/vladmandic/human for license and attribution. The bundled model files are BlazeFace model assets from @vladmandic/human-models.

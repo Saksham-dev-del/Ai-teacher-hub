@@ -1,0 +1,24 @@
+AI Teacher Resource Hub - Phase 4 Change Log
+
+Added:
+- Multi-stage detailed content generation jobs
+- Quick, Standard, Detailed and Research depth modes
+- Text Focused, Balanced and Visual Rich modes
+- Multi-source syllabus/reference RAG selection
+- Section-wise generation with fallback recovery
+- Rich section JSON: explanations, examples, applications, case studies, tables, diagrams, speaker notes and citations
+- Teacher PNG/JPG image library
+- Automatic visual planning
+- Detailed PDF report engine
+- Editable visual PPTX engine
+- Native PowerPoint speaker notes
+- Export quality and validation report
+- Teacher preview/edit flow
+- Real live progress pipeline
+- Additional Motion UI animations
+- Phase 4 tests and documentation
+
+Preserved:
+- Phase 1 authentication, roles, MongoDB and Resource Hub
+- Phase 2 syllabus RAG, Bloom taxonomy, CO mapping and AI quality score
+- Phase 3 student quizzes, auto-grading, analytics, PowerPoint studio and lesson calendar

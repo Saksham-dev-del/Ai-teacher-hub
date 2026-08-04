@@ -1,0 +1,14 @@
+Phase 9 + Phase 10 Complete
+
+- Workload tracker
+- Departments, members, folders and dashboards
+- Comments, review queue, approve/reject workflow
+- Resource versions and restore
+- Ratings and QR public sharing
+- Voice explanations and downloadable Gemini TTS WAV
+- Academic video scripts
+- SVG diagram generator
+- Similarity/originality risk detector
+- AI safety review
+- Semantic hybrid smart search
+- Installable offline PWA shell

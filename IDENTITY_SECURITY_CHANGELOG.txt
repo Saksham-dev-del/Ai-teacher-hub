@@ -1,0 +1,12 @@
+Verified Student Identity Upgrade
+
+- Added encrypted StudentIdentity MongoDB model.
+- Added consented enrollment selfie and face descriptor capture.
+- Added local face embedding, anti-spoof and liveness models.
+- Added teacher/admin approval and rejection queue.
+- Added short-lived identity proof token bound to student, quiz and device.
+- Added server-side live face descriptor matching before quiz start.
+- Added random continuous identity rechecks during the attempt.
+- Added severe/repeated identity mismatch auto-cancellation.
+- Preserved 2-second face-absence cancellation, secure heartbeat, autosave and server-side grading.
+- Continuous video is not uploaded or recorded.
