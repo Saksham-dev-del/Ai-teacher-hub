@@ -41,32 +41,23 @@ async function openModal(id) {
     r = normalizeResourceForView(r);
     const hasRenderableContent = r.reportSections.length || r.sections.length || r.qa.length || r.executiveSummary;
     if (!hasRenderableContent) {
-      console.warn('Resource view: no renderable content for', id, r);
       modalBox.innerHTML = '<button class="modal-close" data-role="modal-close" aria-label="Close">×</button><div class="resource-view-error"><b>This saved item has no renderable content.</b><p>The metadata is present, but its content fields are empty. Regenerate the resource and save it again.</p></div>';
       modalBox.querySelector('[data-role="modal-close"]').addEventListener('click', closeModal);
       return;
     }
-    // Rendering is isolated in its own try/catch so a template bug never gets
-    // reported (or silently retried) as if the resource itself failed to load.
-    try {
-      modalBox.innerHTML = '<button class="modal-close" data-role="modal-close" aria-label="Close">×</button>' + draftToHtml(r, true);
-      modalBox.querySelector('[data-role="modal-close"]').addEventListener('click', closeModal);
-      const rg = modalBox.querySelector('[data-role="regenerate"]');
-      if (rg) rg.remove();
-      const isOwn = resources.some((x) => String(x._id) === String(id));
-      if (!isOwn) {
-        ['share', 'save', 'ppt', 'edit'].forEach((role) => modalBox.querySelector(`[data-role="${role}"]`)?.remove());
-      }
-      wireDraftCard(modalBox, r);
-      modalBox.scrollTop = 0;
-      if (window.runMotionEntrance) window.runMotionEntrance(modalBox);
-    } catch (renderError) {
-      console.error('Resource view render failed (not a fetch/permission issue):', renderError, r);
-      modalBox.innerHTML = `<button class="modal-close" data-role="modal-close" aria-label="Close">×</button><div class="resource-view-error"><b>This resource could not be displayed.</b><p>${escapeHtml(renderError.message || 'A rendering error occurred while building the view.')}</p></div>`;
-      modalBox.querySelector('[data-role="modal-close"]').addEventListener('click', closeModal);
+    modalBox.innerHTML = '<button class="modal-close" data-role="modal-close" aria-label="Close">×</button>' + draftToHtml(r, true);
+    modalBox.querySelector('[data-role="modal-close"]').addEventListener('click', closeModal);
+    const rg = modalBox.querySelector('[data-role="regenerate"]');
+    if (rg) rg.remove();
+    const isOwn = resources.some((x) => String(x._id) === String(id));
+    if (!isOwn) {
+      ['share', 'save', 'ppt', 'edit'].forEach((role) => modalBox.querySelector(`[data-role="${role}"]`)?.remove());
     }
+    wireDraftCard(modalBox, r);
+    modalBox.scrollTop = 0;
+    if (window.runMotionEntrance) window.runMotionEntrance(modalBox);
   } catch (error) {
-    console.error('Resource view failed:', error, 'id:', id);
+    console.error('Resource view failed:', error);
     modalBox.innerHTML = `<button class="modal-close" data-role="modal-close" aria-label="Close">×</button><div class="resource-view-error"><b>Could not open this resource.</b><p>${escapeHtml(error.message || 'Unknown resource view error.')}</p><button class="act-btn primary" data-role="retry-view">Retry</button></div>`;
     modalBox.querySelector('[data-role="modal-close"]').addEventListener('click', closeModal);
     modalBox.querySelector('[data-role="retry-view"]')?.addEventListener('click', () => openModal(id));

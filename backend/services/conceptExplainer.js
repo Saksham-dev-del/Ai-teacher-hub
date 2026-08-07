@@ -3,22 +3,27 @@ const { UNTRUSTED_REFERENCE_RULES } = require('./promptGuard');
 const { diagramPlan, renderDiagramSvg } = require('./platformIntelligence');
 
 const ALL_MODES = ['text', 'diagram', 'animation', 'voice', 'quiz'];
+const EXPLANATION_STRATEGIES = ['Memory Animation', 'Real Life Analogy', 'Code Walkthrough', 'Node Animation', 'Flowchart', 'Layer Animation', 'Timeline Walkthrough'];
 
 // ---------- Concept Analyzer ----------
 function fallbackAnalysis(topic) {
   const t = String(topic || '').toLowerCase();
   let conceptType = 'General Concept';
   let diagramType = 'concept-map';
-  if (/pass by|reference|pointer|memory|address/.test(t)) { conceptType = 'Memory & Variable Behaviour'; diagramType = 'sequence'; }
-  else if (/recursion|recursive/.test(t)) { conceptType = 'Recursive Process'; diagramType = 'flowchart'; }
-  else if (/deadlock|race condition|concurren|lock|mutex/.test(t)) { conceptType = 'Concurrency & Resource Management'; diagramType = 'state'; }
-  else if (/sort|search|algorithm|complexity/.test(t)) { conceptType = 'Algorithm / Divide & Conquer'; diagramType = 'flowchart'; }
-  else if (/tree|graph|linked list|stack|queue|node/.test(t)) { conceptType = 'Data Structure'; diagramType = 'concept-map'; }
-  else if (/network|packet|router|protocol|client|server/.test(t)) { conceptType = 'Networking / Systems Process'; diagramType = 'sequence'; }
-  else if (/database|normalization|transaction|sql|query/.test(t)) { conceptType = 'Database Process'; diagramType = 'flowchart'; }
-  else if (/neural|gradient|model|training|weight|machine learning/.test(t)) { conceptType = 'Machine Learning Process'; diagramType = 'process'; }
+  let conceptTags = ['Core Idea'];
+  let explanationStrategy = 'Real Life Analogy';
+  if (/pass by|reference|pointer|memory|address/.test(t)) { conceptType = 'Memory & Variable Behaviour'; diagramType = 'sequence'; conceptTags = ['Memory', 'Function Calling', 'Variables', 'Copying']; explanationStrategy = 'Memory Animation'; }
+  else if (/recursion|recursive/.test(t)) { conceptType = 'Recursive Process'; diagramType = 'flowchart'; conceptTags = ['Function Calls', 'Base Case', 'Call Stack']; explanationStrategy = 'Code Walkthrough'; }
+  else if (/deadlock|race condition|concurren|lock|mutex/.test(t)) { conceptType = 'Concurrency & Resource Management'; diagramType = 'state'; conceptTags = ['Processes', 'Resource Locking', 'Waiting']; explanationStrategy = 'Real Life Analogy'; }
+  else if (/sort|search|algorithm|complexity/.test(t)) { conceptType = 'Algorithm / Divide & Conquer'; diagramType = 'flowchart'; conceptTags = ['Steps', 'Comparisons', 'Complexity']; explanationStrategy = 'Flowchart'; }
+  else if (/tree|graph|linked list|stack|queue|node/.test(t)) { conceptType = 'Data Structure'; diagramType = 'concept-map'; conceptTags = ['Nodes', 'Links', 'Traversal']; explanationStrategy = 'Node Animation'; }
+  else if (/neural|gradient|deep learning|training|weight|machine learning/.test(t)) { conceptType = 'Machine Learning Process'; diagramType = 'process'; conceptTags = ['Layers', 'Weights', 'Training Loop']; explanationStrategy = 'Layer Animation'; }
+  else if (/network|packet|router|protocol|client.server/.test(t)) { conceptType = 'Networking / Systems Process'; diagramType = 'sequence'; conceptTags = ['Packets', 'Routing', 'Protocol']; explanationStrategy = 'Timeline Walkthrough'; }
+  else if (/database|normalization|transaction|sql|query/.test(t)) { conceptType = 'Database Process'; diagramType = 'flowchart'; conceptTags = ['Tables', 'Relations', 'Process']; explanationStrategy = 'Flowchart'; }
   return {
     conceptType,
+    conceptTags,
+    explanationStrategy,
     reasoning: `Classified from keywords in "${topic}".`,
     recommendedModes: ['text', 'diagram', 'animation', 'voice', 'quiz'],
     diagramType,
@@ -30,11 +35,13 @@ async function analyzeConcept(topic) {
   const fallback = fallbackAnalysis(topic);
   try {
     const system = `You are an expert CS/academic teaching assistant that decides how to best explain a concept to a student. ${UNTRUSTED_REFERENCE_RULES} Return JSON only.`;
-    const prompt = `Topic: "${topic}"\nIdentify the concept type (e.g. "Memory & Variable Behaviour", "Recursive Process", "Concurrency", "Data Structure", "Algorithm", "Database Process", "Networking Process", "Machine Learning Process", or another short label) and which explanation modes genuinely help here, from this fixed set: text, diagram, animation, voice, quiz. Also pick the single best diagram type from: flowchart, mind-map, er, architecture, uml, sequence, state, process, comparison, timeline.\nReturn {"conceptType":"...","reasoning":"one sentence","recommendedModes":["text","diagram",...],"diagramType":"..."}`;
+    const prompt = `Topic: "${topic}"\nIdentify:\n1. conceptType — a short label (e.g. "Memory & Variable Behaviour", "Recursive Process", "Concurrency", "Data Structure", "Algorithm", "Database Process", "Networking Process", "Machine Learning Process", or another short label)\n2. conceptTags — 2-4 short tags naming the underlying building blocks (e.g. for Pass by Value: ["Memory","Function Calling","Variables","Copying"])\n3. explanationStrategy — the single best teaching strategy from: ${EXPLANATION_STRATEGIES.join(', ')}\n4. recommendedModes — which of these genuinely help: text, diagram, animation, voice, quiz\n5. diagramType — best pick from: flowchart, mind-map, er, architecture, uml, sequence, state, process, comparison, timeline\nReturn {"conceptType":"...","conceptTags":["..."],"explanationStrategy":"...","reasoning":"one sentence","recommendedModes":["text","diagram",...],"diagramType":"..."}`;
     const ai = await callJson(system, prompt);
     if (ai.conceptType && Array.isArray(ai.recommendedModes) && ai.recommendedModes.length) {
       return {
         conceptType: String(ai.conceptType).slice(0, 80),
+        conceptTags: Array.isArray(ai.conceptTags) && ai.conceptTags.length ? ai.conceptTags.map((t) => String(t).slice(0, 30)).slice(0, 5) : fallback.conceptTags,
+        explanationStrategy: EXPLANATION_STRATEGIES.includes(ai.explanationStrategy) ? ai.explanationStrategy : fallback.explanationStrategy,
         reasoning: String(ai.reasoning || '').slice(0, 200),
         recommendedModes: ai.recommendedModes.filter((m) => ALL_MODES.includes(m)).slice(0, 5).length ? ai.recommendedModes.filter((m) => ALL_MODES.includes(m)) : fallback.recommendedModes,
         diagramType: ai.diagramType || fallback.diagramType,
@@ -57,6 +64,22 @@ async function generateTextExplanation(topic, conceptType) {
   } catch (_) {}
   return { text: fallbackTextExplanation(topic, conceptType), generationMode: 'fallback' };
 }
+
+// Phase 21 (Doubt Solver) / Phase 17 (Interactive "Explain Again"): re-explain
+// in noticeably simpler language when a student signals confusion.
+function fallbackSimplerExplanation(topic) {
+  return `Let's slow down. ${topic}, in the simplest terms: imagine the smallest possible everyday example of it, focus only on that one thing, and ignore every other detail for now.`;
+}
+async function simplifyExplanation(topic, conceptType, previousExplanation = '') {
+  try {
+    const system = `A student said they still don't understand this explanation. Rewrite it in MUCH simpler language — shorter sentences, a single concrete everyday example, avoid jargon entirely. ${UNTRUSTED_REFERENCE_RULES} Return JSON only.`;
+    const prompt = `Topic: "${topic}" (${conceptType})\n${previousExplanation ? `Previous explanation that didn't land: "${previousExplanation}"\n` : ''}Give a much simpler explanation, max 3 short sentences, one tiny everyday example, no technical terms unless absolutely unavoidable (and if used, define them in the same breath).\nReturn {"explanation":"..."}`;
+    const ai = await callJson(system, prompt);
+    if (ai.explanation && ai.explanation.length > 20) return { text: ai.explanation.slice(0, 600), generationMode: 'ai' };
+  } catch (_) {}
+  return { text: fallbackSimplerExplanation(topic), generationMode: 'fallback' };
+}
+
 
 // ---------- Animation (honest scope): AI-planned step sequence, rendered
 // client-side as an auto-advancing frame-by-frame visual walkthrough — real
@@ -126,4 +149,4 @@ async function explainConcept(topic) {
   return result;
 }
 
-module.exports = { analyzeConcept, generateTextExplanation, generateAnimationSteps, generateQuickQuiz, explainConcept, ALL_MODES };
+module.exports = { analyzeConcept, generateTextExplanation, simplifyExplanation, generateAnimationSteps, generateQuickQuiz, explainConcept, ALL_MODES, EXPLANATION_STRATEGIES };

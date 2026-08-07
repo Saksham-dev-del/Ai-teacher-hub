@@ -1,4 +1,4 @@
-const CACHE='ai-teacher-hub-v13-clean-motion-ui-2';
+const CACHE='ai-teacher-hub-v12-clean-motion-ui-1';
 const APP=['/','/index.html','/offline.html','/manifest.webmanifest','/css/styles.css','/css/ui-clean-motion.css','/vendor/motion-umd.js','/vendor/human.js','/models/blazeface.json','/models/blazeface.bin','/models/facemesh.json','/models/facemesh.bin','/models/iris.json','/models/iris.bin','/models/faceres.json','/models/faceres.bin','/models/antispoof.json','/models/antispoof.bin','/models/liveness.json','/models/liveness.bin','/js/config.js','/js/utils.js','/js/auth.js','/js/storage.js','/js/api.js','/js/nav.js','/js/init.js','/js/phase9-api.js','/js/collaboration.js','/js/phase10-api.js','/js/intelligence.js','/js/identity.js','/js/quizzes.js','/js/pwa.js','/js/animations.js','/js/motion-ui.js','/js/ui-clean-motion.js'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(APP)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));

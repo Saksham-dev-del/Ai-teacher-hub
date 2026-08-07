@@ -151,23 +151,9 @@
         <section class="nav-group" data-group="multimedia">
           <button class="nav-group-toggle" type="button" aria-expanded="true"><span>Multimedia & Intelligence</span><i>⌄</i></button>
           <div class="nav-group-items">
-            <button class="tab" data-tab="intelligence" data-focus="search" data-nav-key="smart-search"><b>⌕</b><span>Semantic Smart Search</span></button>
-          </div>
-        </section>
-
-        <section class="nav-group" data-group="resource-hub-tools">
-          <button class="nav-group-toggle" type="button" aria-expanded="true"><span>AI Teacher Resource Hub</span><i>⌄</i></button>
-          <div class="nav-group-items">
-            <button class="tab" data-tab="intelligence" data-focus="voice" data-nav-key="ai-voice-explanation"><b>🎙</b><span>AI Voice Explanation</span></button>
-            <button class="tab" data-tab="intelligence" data-focus="video" data-nav-key="video-script-generator"><b>🎬</b><span>Video Script Generator</span></button>
-            <button class="tab" data-tab="intelligence" data-focus="diagram" data-nav-key="diagram-generator"><b>◈</b><span>Diagram Generator</span></button>
-            <button class="tab" data-tab="intelligence" data-focus="chart" data-nav-key="chart-generator"><b>📊</b><span>Chart Generator</span></button>
-            <button class="tab" data-tab="intelligence" data-focus="smart-table" data-nav-key="ai-smart-tables"><b>▦</b><span>AI Smart Tables</span></button>
-            <button class="tab" data-tab="intelligence" data-focus="web-search" data-nav-key="ai-internet-search"><b>🌍</b><span>AI Internet Search</span></button>
-            <button class="tab" data-tab="intelligence" data-focus="image-search" data-nav-key="ai-image-finder"><b>🖼</b><span>AI Image Finder</span></button>
-            <button class="tab" data-tab="intelligence" data-focus="illustration-search" data-nav-key="ai-illustration-finder"><b>🎨</b><span>AI Illustration Finder</span></button>
-            <button class="tab" data-tab="intelligence" data-focus="infographic" data-nav-key="ai-infographic-generator"><b>🧾</b><span>AI Infographic Generator</span></button>
-            <button class="tab" data-tab="intelligence" data-focus="whiteboard" data-nav-key="ai-whiteboard"><b>🖊</b><span>AI Whiteboard</span></button>
+            <button class="tab" data-tab="intelligence" data-focus="voice" data-nav-key="voice-studio"><b>◉</b><span>Voice Studio</span></button>
+            <button class="tab" data-tab="intelligence" data-focus="diagram" data-nav-key="diagram-studio"><b>◆</b><span>Diagram Studio</span></button>
+            <button class="tab" data-tab="intelligence" data-focus="search" data-nav-key="smart-search"><b>⌕</b><span>Smart Search</span></button>
           </div>
         </section>
 
@@ -1045,6 +1031,90 @@ Unit 4 — Clustering and Dimensionality Reduction</textarea></div>
       <div id="qce-status" class="phase3-status">AI pehle concept type analyze karta hai, phir sirf wahi modes generate karta hai jo genuinely madad karte hain.</div>
 
       <div id="qce-output" class="qce-output"></div>
+
+      <div class="qce-card motion-card">
+        <div class="qce-card-head"><span>🔀 Analogy Engine (Phase 13)</span></div>
+        <p class="qce-anim-note">Pick a lens to re-explain the topic entirely through that theme.</p>
+        <div id="qce-analogies" class="qce-tags"></div>
+        <button id="btn-qce-analogies" class="gen-btn phase3-action qle-btn">Generate analogies for this topic</button>
+        <div class="qce-theme-row" id="qce-theme-row"></div>
+        <div id="qce-theme-output"></div>
+      </div>
+
+      <div class="qce-card motion-card">
+        <div class="qce-card-head"><span>🎬 Storyboard → Animation → Voice Tutor (Phase 14-16)</span></div>
+        <button id="btn-qce-storyboard" class="gen-btn phase3-action qle-btn">Generate storyboard</button>
+        <div class="qce-sb-controls" id="qce-sb-controls" style="display:none;">
+          <select id="qce-anim-style">
+            <option value="whiteboard">Whiteboard</option>
+            <option value="motion">Motion Graphics</option>
+            <option value="2d">2D Animation</option>
+            <option value="memory">Memory Animation</option>
+            <option value="flowchart">Flowchart Animation</option>
+            <option value="timeline">Timeline Animation</option>
+            <option value="character">Character Animation</option>
+          </select>
+          <select id="qce-voice-style">
+            <option value="teacher">Teacher voice</option>
+            <option value="professor">Professor (slow, deep)</option>
+            <option value="friendly">Friendly (upbeat)</option>
+            <option value="fast">Fast</option>
+          </select>
+          <select id="qce-voice-lang">
+            <option value="en">English</option>
+            <option value="hi">Hindi</option>
+            <option value="hinglish">Hinglish</option>
+          </select>
+          <button id="btn-qce-play-story" class="gen-btn phase3-action qle-btn">▶ Play with narration</button>
+          <button id="btn-qce-stop-story" class="gen-btn phase3-action qle-btn" style="background:transparent;border:1px solid #ccc;">⏹ Stop</button>
+          <a id="qce-sb-download" class="gen-btn p10-download" download="storyboard.json" href="#">Download storyboard JSON</a>
+        </div>
+        <div id="qce-storyboard-stage" class="qce-sb-stage" style="display:none;"></div>
+      </div>
+
+      <div id="qce-checkpoint" class="qce-card motion-card" style="display:none;">
+        <div class="qce-card-head"><span>🙋 Interactive Checkpoint (Phase 17)</span></div>
+        <p><b>Did you understand this?</b></p>
+        <div class="qce-checkpoint-btns">
+          <button id="btn-qce-yes" class="gen-btn phase3-action qle-btn">✅ Yes</button>
+          <button id="btn-qce-no" class="gen-btn phase3-action qle-btn">❌ No</button>
+          <button id="btn-qce-again" class="gen-btn phase3-action qle-btn">🔁 Explain Again (simpler)</button>
+          <button id="btn-qce-example" class="gen-btn phase3-action qle-btn">💡 Show Another Example</button>
+        </div>
+        <div id="qce-checkpoint-output"></div>
+      </div>
+
+      <div class="qce-card motion-card">
+        <div class="qce-card-head"><span>🧪 Live Simulation Engine (Phase 18)</span></div>
+        <p class="qce-anim-note">Watch the concept's internal state change step by step — like a debugger watch window (memory, stack, queue, tree, whatever fits the topic).</p>
+        <button id="btn-qce-simulate" class="gen-btn phase3-action qle-btn">Run live simulation</button>
+        <div id="qce-sim-output"></div>
+      </div>
+
+      <div id="qce-adaptive-note" class="qce-card motion-card" style="display:none;">
+        <div class="qce-card-head"><span>🎯 Adaptive Tutor (Phase 19)</span></div>
+        <p id="qce-adaptive-text"></p>
+        <button id="btn-qce-adaptive-switch" class="gen-btn phase3-action qle-btn">Re-explain a different way</button>
+      </div>
+
+      <div class="qce-card motion-card">
+        <div class="qce-card-head"><span>📚 Revision Engine (Phase 20)</span></div>
+        <button id="btn-qce-revision" class="gen-btn phase3-action qle-btn">Generate full revision pack</button>
+        <div id="qce-revision-output"></div>
+      </div>
+
+      <div class="qce-card motion-card">
+        <div class="qce-card-head"><span>🆘 Doubt Solver (Phase 21)</span></div>
+        <p class="qce-anim-note">Still stuck? This regenerates a simpler explanation with a fresh analogy.</p>
+        <button id="btn-qce-doubt" class="gen-btn phase3-action qle-btn">I still don't understand</button>
+        <div id="qce-doubt-output"></div>
+      </div>
+
+      <div class="qce-card motion-card">
+        <div class="qce-card-head"><span>🗺 Knowledge Graph (Phase 22)</span></div>
+        <button id="btn-qce-related" class="gen-btn phase3-action qle-btn">What should I learn next?</button>
+        <div id="qce-related-output"></div>
+      </div>
     </section>
 
     <!-- ANALYTICS -->

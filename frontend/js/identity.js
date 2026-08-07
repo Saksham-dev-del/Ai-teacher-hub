@@ -1,14 +1,6 @@
 let identityEnginePromise = null;
 let identityPanelObjectUrls = [];
 
-function withTimeout(promise, ms, message) {
-  let timer;
-  const timeout = new Promise((_, reject) => {
-    timer = setTimeout(() => reject(new Error(message)), ms);
-  });
-  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
-}
-
 async function identityApi(path, options = {}, fallback = 'Identity request failed.') {
   const response = await authFetch(path, options);
   const data = await response.json().catch(() => ({}));
@@ -86,27 +78,9 @@ async function getSecureIdentityEngine() {
     if (typeof window.Human !== 'object' || typeof window.Human.Human !== 'function') {
       throw new Error('The local identity model is unavailable. Reload in current Chrome or Edge.');
     }
-    let human = null;
-    let lastLoadError = null;
-    // 'humangl' is Human's own isolated WebGL context and is more reliable than
-    // plain 'webgl' (which can silently fail to detect anything if another
-    // library already claimed the WebGL context). Fall back to plain webgl,
-    // then cpu, instead of getting stuck if the preferred backend won't init.
-    for (const backend of ['humangl', 'webgl', 'cpu']) {
-      try {
-        human = new window.Human.Human({ ...identityEngineConfig(), backend });
-        await withTimeout(human.load(), 25000, 'Face-recognition models could not be downloaded (network too slow or blocked). Check your connection and try again.');
-        await withTimeout(human.warmup(), 15000, 'warmup-timeout').catch(() => {});
-        console.debug('[identity] engine ready on backend:', backend, human.tf?.getBackend?.());
-        break;
-      } catch (err) {
-        lastLoadError = err;
-        human = null;
-        console.warn(`[identity] backend "${backend}" failed to initialise, trying next.`, err);
-      }
-    }
-    if (!human) throw lastLoadError || new Error('Could not initialise the local face-recognition engine on this device/browser.');
-    let consecutiveFrameFailures = 0;
+    const human = new window.Human.Human(identityEngineConfig());
+    await human.load();
+    await human.warmup().catch(() => {});
     return {
       mode: 'human-identity',
       human,
@@ -119,17 +93,8 @@ async function getSecureIdentityEngine() {
         human.config.face.antispoof.enabled = full;
         human.config.face.liveness.enabled = full;
         human.config.gesture.enabled = full;
-        try {
-          // A single stuck/slow frame must never freeze the whole capture loop.
-          const result = await withTimeout(human.detect(video), 4000, 'frame-detect-timeout');
-          consecutiveFrameFailures = 0;
-          this.lastResult = result || { face: [], gesture: [] };
-        } catch (err) {
-          consecutiveFrameFailures += 1;
-          console.warn('[identity] frame detection skipped:', err.message || err, 'videoReady:', video.readyState, video.videoWidth, video.videoHeight);
-          if (consecutiveFrameFailures >= 8) throw new Error('The local detection engine stopped responding on this device. Try a different browser (current Chrome/Edge) or reload the page.');
-          this.lastResult = { face: [], gesture: [] };
-        }
+        const result = await human.detect(video);
+        this.lastResult = result || { face: [], gesture: [] };
         return this.lastResult;
       }
     };
@@ -177,15 +142,11 @@ async function collectIdentitySample(video, engine, { requireChallenge = false, 
   let challengePassed = !requireChallenge;
   let stableFrames = 0;
   let lastFace = null;
-  let everSawAFace = false;
-  let framesChecked = 0;
   while (Date.now() - startedAt < timeoutMs) {
-    framesChecked += 1;
     const result = await engine.detectFrame(video, { full: true });
     const faces = result?.face || [];
     if (faces.length > 1) throw new Error('More than one face is visible. Only the registered student may remain in frame.');
     if (faces.length === 1) {
-      everSawAFace = true;
       const face = faces[0];
       const embedding = face?.embedding;
       const live = faceMetric(face, 'live');
@@ -207,20 +168,11 @@ async function collectIdentitySample(video, engine, { requireChallenge = false, 
       }
       if (descriptors.length >= sampleCount && challengePassed) break;
     } else if (statusElement) {
-      const elapsedSec = Math.round((Date.now() - startedAt) / 1000);
-      statusElement.textContent = everSawAFace
-        ? 'Face lost — keep your full face centered and well lit.'
-        : (elapsedSec > 6
-          ? `Still no face detected after ${elapsedSec}s — check camera permission for this tab, improve lighting, and move closer.`
-          : (requireChallenge ? 'Keep your full face visible and blink once.' : 'Keep your full face visible and look at the camera.'));
+      statusElement.textContent = requireChallenge ? 'Keep your full face visible and blink once.' : 'Keep your full face visible and look at the camera.';
     }
-    if (framesChecked % 6 === 0) console.debug('[identity] capture progress', { framesChecked, facesSeen: faces.length, everSawAFace, descriptorsCollected: descriptors.length, videoSize: `${video.videoWidth}x${video.videoHeight}` });
     await new Promise((resolve) => setTimeout(resolve, 350));
   }
-  if (descriptors.length < Math.min(2, sampleCount)) {
-    if (!everSawAFace) throw new Error('No face was ever detected. Check that your browser has camera permission for this exact site (padlock icon → Camera → Allow), then retry.');
-    throw new Error('Could not capture enough stable face samples. Improve lighting and look directly at the camera.');
-  }
+  if (descriptors.length < Math.min(2, sampleCount)) throw new Error('Could not capture enough stable face samples. Improve lighting and look directly at the camera.');
   if (!challengePassed) throw new Error('The live blink/liveness challenge was not completed.');
   return {
     descriptor: averageFaceDescriptors(descriptors.slice(-sampleCount)),
@@ -312,7 +264,6 @@ async function openIdentityEnrollmentModal() {
     if (!document.getElementById('identity-enrol-consent').checked) return showToast('Consent is required for face identity enrollment.', 'error');
     button.disabled = true;
     button.textContent = 'Loading secure local models…';
-    status.textContent = 'Downloading face-recognition models (first time can take up to ~20s)…';
     try {
       stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }, audio: false });
       const video = document.getElementById('identity-enrol-video');

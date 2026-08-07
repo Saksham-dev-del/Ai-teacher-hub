@@ -57,15 +57,7 @@ function applyToolFocus(name, focus) {
   if (name === 'intelligence') {
     const targets = {
       voice: document.getElementById('btn-p10-voice'),
-      video: document.getElementById('btn-p10-video'),
       diagram: document.getElementById('btn-p10-diagram'),
-      chart: document.getElementById('btn-p10-chart'),
-      'smart-table': document.getElementById('btn-p10-smart-table'),
-      'web-search': document.getElementById('btn-p10-web-search'),
-      'image-search': document.getElementById('btn-p10-image-search'),
-      'illustration-search': document.getElementById('btn-p10-illustration-search'),
-      infographic: document.getElementById('btn-p10-infographic'),
-      whiteboard: document.getElementById('btn-p10-whiteboard'),
       search: document.getElementById('p10-search')
     };
     pulseFocusTarget(targets[focus]);

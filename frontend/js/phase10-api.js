@@ -20,6 +20,13 @@ const apiImageSearch=(p)=>p10json('/api/intelligence/image-search',{method:'POST
 const apiIllustrationSearch=(p)=>p10json('/api/intelligence/illustration-search',{method:'POST',body:JSON.stringify(p)});
 const apiGenerateInfographic=(p)=>p10json('/api/intelligence/infographic',{method:'POST',body:JSON.stringify(p)});
 const apiConceptExplain=(p)=>p10json('/api/intelligence/concept-explain',{method:'POST',body:JSON.stringify(p)});
+const apiGenerateAnalogies=(p)=>p10json('/api/intelligence/analogies',{method:'POST',body:JSON.stringify(p)});
+const apiAnalogyExplain=(p)=>p10json('/api/intelligence/analogy-explain',{method:'POST',body:JSON.stringify(p)});
+const apiGenerateStoryboard=(p)=>p10json('/api/intelligence/storyboard',{method:'POST',body:JSON.stringify(p)});
+const apiSimplifyExplanation=(p)=>p10json('/api/intelligence/simplify-explanation',{method:'POST',body:JSON.stringify(p)});
+const apiRunSimulation=(p)=>p10json('/api/intelligence/simulation',{method:'POST',body:JSON.stringify(p)});
+const apiGenerateRevisionPack=(p)=>p10json('/api/intelligence/revision-pack',{method:'POST',body:JSON.stringify(p)});
+const apiRelatedTopics=(p)=>p10json('/api/intelligence/related-topics',{method:'POST',body:JSON.stringify(p)});
 const apiP10Similarity=(p)=>p10json('/api/intelligence/similarity-risk',{method:'POST',body:JSON.stringify(p)});
 const apiP10Factual=(p)=>p10json('/api/intelligence/factual-verification',{method:'POST',body:JSON.stringify(p)});
 const apiP10Safety=(p)=>p10json('/api/intelligence/safety-review',{method:'POST',body:JSON.stringify(p)});
